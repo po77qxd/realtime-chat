@@ -11,6 +11,9 @@ app.get("/", (req, res) => {
     res.json({mesage: "hello"})
 })
 
+import { userRouter } from "./routes/users.js";
+app.use("/api/users", userRouter);
+
 app.use(({ res }) => {
   const message =
     "Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";
