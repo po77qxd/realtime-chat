@@ -1,6 +1,6 @@
 import express from "express";
 import { success } from "../routes/helper.js";
-import { Conversation } from "../db/sequelize.js";
+import { Conversation, Message } from "../db/sequelize.js";
 
 const conversationRouter = express();
 
@@ -32,6 +32,16 @@ conversationRouter.get("/:id", (req, res) => {
     });
 });
 
-
+conversationRouter.get("/:id/messages", (req, res) => {
+  Message.findAll({ where: {conversation_id: req.params.id}, order: ["timestamp_"]})
+    .then((messages) => {
+      const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
+      res.json(success(message, messages));
+    })
+    .catch((error) => {
+      const message = `Les messages n'ont pas pu être récupérés. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
 
 export { conversationRouter };
