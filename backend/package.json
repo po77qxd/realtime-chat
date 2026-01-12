@@ -1,4 +1,12 @@
 {
+  "name": "realtime-chat",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon src/app.js"
+  },
+  "author": "po77qxd",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -8,5 +16,8 @@
     "mysql2": "^3.16.0",
     "sequelize": "^6.37.7",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
