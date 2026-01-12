@@ -14,6 +14,9 @@ app.get("/", (req, res) => {
 import { userRouter } from "./routes/users.js";
 app.use("/api/users", userRouter);
 
+import { conversationRouter } from "./routes/conversations.js";
+app.use("/api/conversations", conversationRouter);
+
 app.use(({ res }) => {
   const message =
     "Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";
