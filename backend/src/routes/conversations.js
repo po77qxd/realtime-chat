@@ -44,4 +44,46 @@ conversationRouter.get("/:id/messages", (req, res) => {
     });
 });
 
+conversationRouter.post("/", (req, res) => {
+  Conversation.create({
+    name: req.body.name,
+    admin_user_id: req.user_id
+  })
+    .then((createdConv) => {
+      const message = `la conversation ${createdConv.name} a bien été crée.`;
+      res.json(success(message, createdConv));
+    })
+    .catch((error) => {
+      const message = `La conversation n'a n'a pas pu être crée. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
+conversationRouter.put("/:id", (req, res) => {
+  Conversation.update({
+    name: req.body.name,
+    admin_user_id: req.user_id
+  }, { where: { conversation_id: req.params.id }})
+    .then((updatedConv) => {
+      const message = `la conversation ${req.params.id} a bien été modifiée.`;
+      res.json(success(message, updatedConv));
+    })
+    .catch((error) => {
+      const message = `La conversation n'a n'a pas pu être modifiée. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
+conversationRouter.delete("/:id", (req, res) => {
+  Conversation.destroy({ where: { conversation_id: req.params.id}})
+    .then((deletedConv) => {
+      const message = `la conversation ${req.params.id} a bien été supprimée.`;
+      res.json(success(message, deletedConv));
+    })
+    .catch((error) => {
+      const message = `La conversation n'a n'a pas pu être supprimé. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
 export { conversationRouter };
