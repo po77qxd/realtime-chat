@@ -1,10 +1,11 @@
 import express from "express";
 import { success } from "../routes/helper.js";
 import { Message } from "../db/sequelize.js";
+import auth from "../auth/auth.js";
 
 const messageRouter = express();
 
-messageRouter.get("/", (req, res) => {
+messageRouter.get("/", auth, (req, res) => {
   Message.findAll({ order: ["timestamp_"]})
     .then((messages) => {
       const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
@@ -16,7 +17,7 @@ messageRouter.get("/", (req, res) => {
     });
 });
 
-messageRouter.get("/:id", (req, res) => {
+messageRouter.get("/:id", auth, (req, res) => {
   Message.findByPk(req.params.id)
     .then((message) => {
       if (message === null) {

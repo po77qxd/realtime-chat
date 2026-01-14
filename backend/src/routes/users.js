@@ -1,10 +1,11 @@
 import express from "express";
 import { success } from "../routes/helper.js";
 import { User } from "../db/sequelize.js";
+import auth from "../auth/auth.js";
 
 const userRouter = express();
 
-userRouter.get("/", (req, res) => {
+userRouter.get("/", auth, (req, res) => {
   User.findAll({ order: ["name"], attributes: { exclude: ["password"] }})
     .then((users) => {
       const message = `Il y a ${users.length} utilisateurs qui correspondent au terme de la recherche`;
@@ -17,9 +18,9 @@ userRouter.get("/", (req, res) => {
 });
 
 //récuprée l'id de l'utilisateur connecté
-userRouter.get("/currentUser", async (req, res) => {
+userRouter.get("/currentUser", auth, async (req, res) => {
   try {
-    const user = await User.findByPk(req.user_Id, {
+    const user = await User.findByPk(req.user_id, {
       attributes: { exclude: ["password"] }, // évite d'envoyer le mot de passe
     });
     if (!user) {
@@ -32,7 +33,7 @@ userRouter.get("/currentUser", async (req, res) => {
   }
 });
 
-userRouter.get("/:id", (req, res) => {
+userRouter.get("/:id", auth, (req, res) => {
   User.findByPk(req.params.id, {
       attributes: { exclude: ["password"] }, // évite d'envoyer le mot de passe
     })
