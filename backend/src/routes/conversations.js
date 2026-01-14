@@ -33,18 +33,6 @@ conversationRouter.get("/:id", auth, (req, res) => {
     });
 });
 
-conversationRouter.get("/:id/messages", auth, (req, res) => {
-  Message.findAll({ where: {conversation_id: req.params.id}, order: ["timestamp_"]})
-    .then((messages) => {
-      const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
-      res.json(success(message, messages));
-    })
-    .catch((error) => {
-      const message = `Les messages n'ont pas pu être récupérés. Merci de réessayer dans quelques instants.`;
-      res.status(500).json({ message, data: error });
-    });
-});
-
 conversationRouter.post("/", auth, (req, res) => {
   Conversation.create({
     name: req.body.name,
@@ -87,4 +75,33 @@ conversationRouter.delete("/:id", auth, (req, res) => {
     });
 });
 
+
+// MESSAGES //
+conversationRouter.get("/:id/messages", auth, (req, res) => {
+  Message.findAll({ where: {conversation_id: req.params.id}, order: ["timestamp_"]})
+    .then((messages) => {
+      const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
+      res.json(success(message, messages));
+    })
+    .catch((error) => {
+      const message = `Les messages n'ont pas pu être récupérés. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
+conversationRouter.post("/:id/messages", auth, (req, res) => {
+  Message.create({
+    text: req.body.text,
+    conversation_id: req.params.id,
+    user_id: req.user_id
+  })
+    .then((createdMessage) => {
+      const message = `le message ${createdMessage.message_id} a bien été crée.`;
+      res.json(success(message, createdMessage));
+    })
+    .catch((error) => {
+      const message = `Le message n'a n'a pas pu être crée. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
 export { conversationRouter };

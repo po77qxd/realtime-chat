@@ -33,4 +33,28 @@ messageRouter.get("/:id", auth, (req, res) => {
     });
 });
 
+messageRouter.put("/:id", auth, (req, res) => {
+  Message.update({text: req.body.text}, { where: { message_id: req.params.id}})
+    .then((updatedMessage) => {
+      const message = `le message ${req.params.id} a bien été modifié.`;
+      res.json(success(message, updatedMessage));
+    })
+    .catch((error) => {
+      const message = `Le message n'a n'a pas pu être modifié. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
+messageRouter.delete("/:id", auth, (req, res) => {
+  Message.destroy({ where: { message_id: req.params.id}})
+    .then((deletedMessage) => {
+      const message = `le message ${req.params.id} a bien été supprimé.`;
+      res.json(success(message, deletedMessage));
+    })
+    .catch((error) => {
+      const message = `Le message n'a n'a pas pu être supprimé. Merci de réessayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
 export { messageRouter };
