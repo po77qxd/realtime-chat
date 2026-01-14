@@ -1,5 +1,6 @@
 import express from "express";
 import { sequelize, initDb } from "./db/sequelize.js";
+import "dotenv/config";
 
 
 const app = express();
