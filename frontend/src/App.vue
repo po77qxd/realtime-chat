@@ -20,6 +20,7 @@ onMounted(() => {
   <div id="layout">
     <header>
       <nav class="nav">
+        <div>{{ user.name }}</div>
         <div class="nav-buttons">
 
           <RouterLink v-if="user?.user_id == null" to="/login">
@@ -68,6 +69,11 @@ header {
 .nav {
   display: flex;
   justify-content: flex-end;
+}
+
+.nav button {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .content {
