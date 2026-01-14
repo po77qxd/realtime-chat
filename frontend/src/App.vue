@@ -42,19 +42,19 @@ onMounted(() => {
       <RouterView />
     </main>
 
-    <footer>
+    <!-- <footer>
       <p><strong>Site créé par</strong></p>
       <ul>
         <li>Bastien Segalen (bastien.segalen@eduvaud.ch)</li>
       </ul>
-    </footer>
+    </footer> -->
   </div>
 </template>
 
 
 <style scoped>
 #layout {
-  min-height: 100vh;
+  height: 97vh;
   display: flex;
   flex-direction: column;
   color: #fff;
@@ -62,8 +62,9 @@ onMounted(() => {
 }
 
 header {
-  padding: 16px 24px;
+  padding: 15px 24px;
   border-bottom: 1px solid #333333;
+  height: 3vh;
 }
 
 .nav {
@@ -81,6 +82,7 @@ header {
   display: flex;
   justify-content: center;
   padding: 40px 20px;
+  padding-bottom: 0px;
 }
 
 footer {
