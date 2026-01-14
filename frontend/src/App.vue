@@ -20,7 +20,7 @@ onMounted(() => {
   <div id="layout">
     <header>
       <nav class="nav">
-        <div>{{ user.name }}</div>
+        <div v-if="user != null">{{ user.name }}</div>
         <div class="nav-buttons">
 
           <RouterLink v-if="user?.user_id == null" to="/login">
