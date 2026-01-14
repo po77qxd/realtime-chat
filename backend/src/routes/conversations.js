@@ -1,10 +1,11 @@
 import express from "express";
 import { success } from "../routes/helper.js";
 import { Conversation, Message } from "../db/sequelize.js";
+import auth from "../auth/auth.js";
 
 const conversationRouter = express();
 
-conversationRouter.get("/", (req, res) => {
+conversationRouter.get("/", auth, (req, res) => {
   Conversation.findAll({ order: ["name"] })
     .then((convs) => {
       const message = `Il y a ${convs.length} conversations`;
@@ -16,7 +17,7 @@ conversationRouter.get("/", (req, res) => {
     });
 });
 
-conversationRouter.get("/:id", (req, res) => {
+conversationRouter.get("/:id", auth, (req, res) => {
   Conversation.findByPk(req.params.id)
     .then((conv) => {
       if (conv === null) {
@@ -32,7 +33,7 @@ conversationRouter.get("/:id", (req, res) => {
     });
 });
 
-conversationRouter.get("/:id/messages", (req, res) => {
+conversationRouter.get("/:id/messages", auth, (req, res) => {
   Message.findAll({ where: {conversation_id: req.params.id}, order: ["timestamp_"]})
     .then((messages) => {
       const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
@@ -44,7 +45,7 @@ conversationRouter.get("/:id/messages", (req, res) => {
     });
 });
 
-conversationRouter.post("/", (req, res) => {
+conversationRouter.post("/", auth, (req, res) => {
   Conversation.create({
     name: req.body.name,
     admin_user_id: req.user_id
@@ -59,7 +60,7 @@ conversationRouter.post("/", (req, res) => {
     });
 });
 
-conversationRouter.put("/:id", (req, res) => {
+conversationRouter.put("/:id", auth, (req, res) => {
   Conversation.update({
     name: req.body.name,
     admin_user_id: req.user_id
@@ -74,7 +75,7 @@ conversationRouter.put("/:id", (req, res) => {
     });
 });
 
-conversationRouter.delete("/:id", (req, res) => {
+conversationRouter.delete("/:id", auth, (req, res) => {
   Conversation.destroy({ where: { conversation_id: req.params.id}})
     .then((deletedConv) => {
       const message = `la conversation ${req.params.id} a bien été supprimée.`;
