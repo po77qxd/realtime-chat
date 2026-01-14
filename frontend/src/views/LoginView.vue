@@ -1,14 +1,28 @@
 <script setup>
 import { ref } from 'vue'
+import AuthService from '@/services/authService'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const user = ref({email: "", password: ""})
+
+async function handleSubmit(){
+ try {
+    const response = await AuthService.loginUser(user.value.email, user.value.password)
+    //console.log(response.data)
+    router.push("/")
+ } catch (error){
+    console.error("Login error:" + error)
+ }
+}
 
 </script>
 <template>
     <div class="connexion-form">
       <h1>Login</h1>
       <form @submit.prevent="handleSubmit">
-        <input type="text" v-model="user.email" placeholder="Email" required/>
+        <input type="email" v-model="user.email" placeholder="Email" required/>
         <input type="password" v-model="user.password" placeholder="Mot de passe" required/>
         <router-link to="/register">Pas encore inscrit ?</router-link>
         <button type="submit">Se connecter</button>

@@ -1,14 +1,31 @@
 <script setup>
 import { ref } from 'vue'
+import AuthService from '@/services/authService'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const user = ref({email: "", name: "", password: "", confirmPassword: "" })
+
+async function handleSubmit(){
+ try {
+    if (user.value.password != user.value.confirmPassword) {
+      alert('Les mots de passe ne correspondent pas');
+      return;
+    }
+    const response = await AuthService.registerUser(user.value.email, user.value.name, user.value.password)
+    router.push("/login")
+    //console.log(response.data)
+ } catch (error){
+    console.error("Login error:" + error)
+ }
+}
 
 </script>
 <template>
     <div class="register-form">
       <h1>Inscription</h1>
       <form @submit.prevent="handleSubmit">
-        <input type="text" v-model="user.email" placeholder="Email" required />
+        <input type="email" v-model="user.email" placeholder="Email" required />
         <input type="text" v-model="user.name" placeholder="Nom" required />
         <input type="password" v-model="user.password" placeholder="Mot de passe" required />
         <input
