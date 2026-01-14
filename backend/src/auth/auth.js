@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const auth = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
+  const token = req.cookies.realtime_chat;
   const privKey = process.env.PRIV_KEY;
   if (!token) {
     return res.status(401).json({

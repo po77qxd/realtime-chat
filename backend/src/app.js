@@ -21,6 +21,12 @@ app.use("/api/conversations", conversationRouter);
 import { messageRouter } from "./routes/messages.js";
 app.use("/api/messages", messageRouter);
 
+import { loginRouter} from "./routes/login.js"
+app.use("/api/login", loginRouter);
+
+import { registerRouter } from "./routes/register.js"
+app.use("/api/register", registerRouter);
+
 app.use(({ res }) => {
   const message =
     "Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";

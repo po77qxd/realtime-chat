@@ -5,4 +5,10 @@ const success = (message, data) => {
   };
 };
 
-export { success };
+//return user without password
+const cleanUser = (user) => {
+  const { password, ...cleanUser } = user.get({ plain: true });
+  return cleanUser;
+}
+
+export { success, cleanUser };
