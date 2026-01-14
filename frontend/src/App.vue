@@ -1,4 +1,18 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+import userService from './services/userService'
+
+const user = ref(null)
+
+onMounted(() => {
+  userService.getCurrentUser()
+    .then((response) => {
+      user.value = response.data
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+})
 
 </script>
 
@@ -7,15 +21,16 @@
     <header>
       <nav class="nav">
         <div class="nav-buttons">
-          <RouterLink v-if="user_id == null" to="/login">
+
+          <RouterLink v-if="user?.user_id == null" to="/login">
             <button>Connexion</button>
           </RouterLink>
 
-          <RouterLink v-if="user_id == null" to="/register">
+          <RouterLink v-if="user?.user_id == null" to="/register">
             <button>Inscription</button>
           </RouterLink>
 
-          <button v-if="user_id !== null" @click="handleLogout">
+          <button v-if="user && user?.user_id !== null" @click="handleLogout">
             Déconnexion
           </button>
         </div>
