@@ -1,5 +1,38 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+import conversationService from '@/services/conversationService'
+import userService from '@/services/userService'
 
+const conversations = ref(null)
+const messages = ref(null)
+const user = ref(null)
+
+onMounted(() => {
+  userService.getCurrentUser()
+    .then((response) => {
+      user.value = response.data
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+
+    //TODO: récupérer seulement les conv de l'user connecté, pas toutes les conv
+  conversationService.getConversations()
+    .then((response) => {
+      conversations.value = response.data.data
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+    //TODO: récupérer les messages de la conv actuellement affichée
+  conversationService.getMessagesByConvId(1)
+    .then((response) => {
+      messages.value = response.data.data
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+})
 
 </script>
 <template>
@@ -36,7 +69,6 @@
 <style scoped>
 .home {
     display: flex;
-    /* height: calc(100vh - 55px); */
     width: 100%;
 }
 
@@ -90,6 +122,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    margin-left: 15px;
 }
 
 .messages {
@@ -98,7 +131,6 @@
 }
 
 .message {
-    max-width: 60%;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -110,7 +142,7 @@
 }
 
 .message-text {
-    background: #ddd;
+    background: blue;
     padding: 8px 12px;
     width: fit-content;
 }
@@ -118,10 +150,11 @@
 .self-message {
     align-self: flex-end;
     text-align: right;
+    margin-right: 15px;
 }
 
 .self-message .message-text {
-    background: #dcdcdc;
+    background: darkblue;
     margin-left: auto;
 }
 
