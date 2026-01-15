@@ -9,6 +9,7 @@ const user = ref(null)
 const shownConvId = ref(null)
 const showCreateConv = ref(false)
 const convName = ref('')
+const messageToSend = ref('')
 
 //TODO: menu edit/delete sur les messages
 //TODO: ordre des messages
@@ -76,6 +77,20 @@ async function createConv() {
 			console.log(error)
 		})
 }
+
+async function sendMessage() {
+	if (!messageToSend.value.trim()) return
+
+	conversationService
+		.sendMessage(shownConvId.value, messageToSend.value)
+		.then((response) => {
+			messageToSend.value = ''
+			//console.log(response.data.data)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 <template>
 	<div class="home">
@@ -121,8 +136,12 @@ async function createConv() {
 				</div>
 			</div>
 			<div class="message-bar">
-				<input type="text" placeholder="Envoyer un message" />
-				<button>Envoyer</button>
+				<form @submit.prevent="sendMessage" class="sendMessageForm">
+					<input type="text" placeholder="Envoyer un message" v-model="messageToSend" />
+					<button type="submit" class="sendButton">
+						<img src="../assets/send.png" />
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -224,6 +243,10 @@ async function createConv() {
 	margin-left: auto;
 }
 
+.sendMessageForm {
+	display: flex;
+}
+
 .message-bar {
 	width: 100%;
 	margin-left: 10px;
@@ -237,6 +260,15 @@ async function createConv() {
 
 .message-bar button {
 	cursor: pointer;
+	width: 40px;
+	margin: 5px;
+	border: none;
+	margin-left: -40px;
+	background-color: white;
+}
+
+.sendButton img {
+	width: 100%;
 }
 
 .createConv {
