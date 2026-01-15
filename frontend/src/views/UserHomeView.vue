@@ -6,7 +6,7 @@ import userService from '@/services/userService'
 const conversations = ref(null)
 const messages = ref(null)
 const user = ref(null)
-
+const shownConvId = ref(null)
 const showCreateConv = ref(false)
 const convName = ref('')
 
@@ -22,6 +22,7 @@ onMounted(() => {
 				.getUserConversations(user.value.user_id)
 				.then((response) => {
 					conversations.value = response.data.data
+					shownConvId.value = conversations.value[0].conversation_id
 
 					conversationService
 						.getMessagesByConvId(conversations.value[0].conversation_id) //par défaut on affiche les messages de la premiere conv
@@ -42,6 +43,7 @@ onMounted(() => {
 })
 
 function change_conv(id) {
+	shownConvId.value = id
 	conversationService
 		.getMessagesByConvId(id)
 		.then((response) => {
@@ -84,7 +86,11 @@ async function createConv() {
 				<button>Filtres</button>
 			</div>
 			<div class="conversations-list">
-				<div v-for="conv in conversations" @click="change_conv(conv.conversation_id)">
+				<div
+					v-for="conv in conversations"
+					@click="change_conv(conv.conversation_id)"
+					:class="{ selectedConv: shownConvId == conv.conversation_id }"
+				>
 					{{ conv.name }}
 				</div>
 			</div>
@@ -161,6 +167,10 @@ async function createConv() {
 .conversations-list div {
 	padding: 6px 0;
 	cursor: pointer;
+}
+
+.selectedConv {
+	background-color: blue;
 }
 
 .buttons {
