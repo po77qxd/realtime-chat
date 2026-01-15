@@ -79,4 +79,18 @@ userRouter.get("/:id/conversations", auth, (req, res) => {
 		});
 });
 
+userRouter.post("/logout", (req, res) => {
+	try {
+		res.clearCookie("realtime-chat", {
+			path: "/",
+		});
+
+		const message = `L'utilisateur a bien été déconnecté.`;
+		res.status(200).json({ message });
+	} catch (error) {
+		const message = `La déconnexion a échoué. Veuillez réessayer dans quelques instants.`;
+		res.status(500).json({ message, data: error });
+	}
+});
+
 export { userRouter };
