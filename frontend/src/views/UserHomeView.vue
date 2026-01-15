@@ -7,23 +7,25 @@ const conversations = ref(null)
 const messages = ref(null)
 const user = ref(null)
 
+//TODO: menu edit/delete sur les messages
+//TODO: ordre des messages
+
 onMounted(() => {
   userService.getCurrentUser()
     .then((response) => {
       user.value = response.data
+        userService.getUserConversations(user.value.user_id)
+            .then((response) => {
+                conversations.value = response.data.data
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     })
     .catch((error) => {
       console.log(error)
     })
 
-    //TODO: récupérer seulement les conv de l'user connecté, pas toutes les conv
-  conversationService.getConversations()
-    .then((response) => {
-      conversations.value = response.data.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
     //TODO: récupérer les messages de la conv actuellement affichée
   conversationService.getMessagesByConvId(1)
     .then((response) => {

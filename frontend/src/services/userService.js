@@ -13,6 +13,11 @@ async function getCurrentUser() {
   return apiClient.get('/currentUser')
 }
 
+async function getUserConversations(id) {
+  return apiClient.get(`/${id}/conversations`)
+}
+
 export default {
-  getCurrentUser
+  getCurrentUser,
+  getUserConversations
 }
