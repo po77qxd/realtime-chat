@@ -4,23 +4,21 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-)
-
+	cors({
+		origin: "http://localhost:5173",
+		credentials: true,
+	})
+);
 
 app.get("/", (req, res) => {
-    res.json({mesage: "hello"})
-})
+	res.json({ mesage: "hello" });
+});
 
 import { userRouter } from "./routes/users.js";
 app.use("/api/users", userRouter);
@@ -31,26 +29,25 @@ app.use("/api/conversations", conversationRouter);
 import { messageRouter } from "./routes/messages.js";
 app.use("/api/messages", messageRouter);
 
-import { loginRouter} from "./routes/login.js"
+import { loginRouter } from "./routes/login.js";
 app.use("/api/login", loginRouter);
 
-import { registerRouter } from "./routes/register.js"
+import { registerRouter } from "./routes/register.js";
 app.use("/api/register", registerRouter);
 
 app.use(({ res }) => {
-  const message =
-    "Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";
-  res.status(404).json(message);
+	const message =
+		"Impossible de trouver la ressource demandée ! Vous pouvez essayer une autre URL.";
+	res.status(404).json(message);
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port http://localhost:${port}`);
+	console.log(`Example app listening on port http://localhost:${port}`);
 });
 
-
 sequelize
-  .authenticate()
-  .then((_) => console.log("Connexion à la base de données réussie."))
-  .catch((error) => console.error("Erreur de connexion à la base de données"));
+	.authenticate()
+	.then((_) => console.log("Connexion à la base de données réussie."))
+	.catch((error) => console.error("Erreur de connexion à la base de données"));
 
 initDb();
