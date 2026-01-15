@@ -6,7 +6,6 @@ import userService from '@/services/userService'
 const conversations = ref(null)
 const messages = ref(null)
 const user = ref(null)
-const shown_conv_id = ref(null)
 
 //TODO: menu edit/delete sur les messages
 //TODO: ordre des messages
