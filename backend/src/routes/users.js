@@ -81,7 +81,7 @@ userRouter.get("/:id/conversations", auth, (req, res) => {
 
 userRouter.post("/logout", (req, res) => {
 	try {
-		res.clearCookie("realtime-chat", {
+		res.clearCookie("realtime_chat", {
 			path: "/",
 		});
 

@@ -17,7 +17,12 @@ async function getUserConversations(id) {
 	return apiClient.get(`/${id}/conversations`)
 }
 
+async function logoutUser() {
+	return apiClient.post(`/logout`)
+}
+
 export default {
 	getCurrentUser,
 	getUserConversations,
+	logoutUser,
 }

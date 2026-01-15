@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import userService from './services/userService'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const user = ref(null)
 
@@ -14,6 +17,19 @@ onMounted(() => {
 			console.log(error)
 		})
 })
+
+function logout() {
+	userService
+		.logoutUser()
+		.then((response) => {
+			//console.log(response.data)
+			user.value = null
+			router.push('/')
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 
 <template>
@@ -30,7 +46,7 @@ onMounted(() => {
 						<button>Inscription</button>
 					</RouterLink>
 
-					<button v-if="user && user?.user_id !== null" @click="handleLogout">
+					<button v-if="user && user?.user_id !== null" @click="logout">
 						Déconnexion
 					</button>
 				</div>
