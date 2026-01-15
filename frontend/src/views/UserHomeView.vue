@@ -7,6 +7,9 @@ const conversations = ref(null)
 const messages = ref(null)
 const user = ref(null)
 
+const showCreateConv = ref(false)
+const convName = ref('')
+
 //TODO: menu edit/delete sur les messages
 //TODO: ordre des messages
 
@@ -48,6 +51,29 @@ function change_conv(id) {
 			console.log(error)
 		})
 }
+
+function showCreateConvForm() {
+	showCreateConv.value = true
+}
+
+function closeCreateConvForm() {
+	showCreateConv.value = false
+	convName.value = ''
+}
+
+async function createConv() {
+	if (!convName.value.trim()) return
+
+	conversationService
+		.createConv(convName.value)
+		.then((response) => {
+			closeCreateConvForm()
+			change_conv(response.data.data.conversation_id)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 <template>
 	<div class="home">
@@ -62,8 +88,18 @@ function change_conv(id) {
 					{{ conv.name }}
 				</div>
 			</div>
+
+			<div class="createConv" v-if="showCreateConv">
+				<h3>Créer un conversation</h3>
+				<input type="text" placeholder="Nom de la conversation" v-model="convName" />
+				<div class="createConvButtons">
+					<button @click="closeCreateConvForm">Annuler</button>
+					<button @click="createConv">Créer</button>
+				</div>
+			</div>
+
 			<div class="buttons">
-				<button>Créer une conversation</button>
+				<button @click="showCreateConvForm">Créer une conversation</button>
 				<button>Rejoindre une conversation</button>
 			</div>
 		</div>
@@ -191,5 +227,26 @@ function change_conv(id) {
 
 .message-bar button {
 	cursor: pointer;
+}
+
+.createConv {
+	width: 100%;
+	text-align: center;
+}
+
+.createConv input {
+	padding: 15px;
+	margin: 5px;
+	width: 89%;
+}
+
+.createConvButtons {
+	display: flex;
+}
+
+.createConvButtons button {
+	width: 50%;
+	padding: 15px;
+	margin: 10px;
 }
 </style>

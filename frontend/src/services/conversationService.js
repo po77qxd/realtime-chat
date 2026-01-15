@@ -17,7 +17,12 @@ async function getMessagesByConvId(id) {
 	return apiClient.get(`/${id}/messages`)
 }
 
+async function createConv(name) {
+	return apiClient.post(`/`, { name: name })
+}
+
 export default {
 	getConversations,
 	getMessagesByConvId,
+	createConv,
 }
