@@ -6,6 +6,7 @@ import userService from '@/services/userService'
 const conversations = ref(null)
 const messages = ref(null)
 const user = ref(null)
+const shown_conv_id = ref(null)
 
 //TODO: menu edit/delete sur les messages
 //TODO: ordre des messages
@@ -19,6 +20,15 @@ onMounted(() => {
 				.getUserConversations(user.value.user_id)
 				.then((response) => {
 					conversations.value = response.data.data
+
+					conversationService
+						.getMessagesByConvId(conversations.value[0].conversation_id) //par défaut on affiche les messages de la premiere conv
+						.then((response) => {
+							messages.value = response.data.data
+						})
+						.catch((error) => {
+							console.log(error)
+						})
 				})
 				.catch((error) => {
 					console.log(error)
@@ -27,17 +37,18 @@ onMounted(() => {
 		.catch((error) => {
 			console.log(error)
 		})
+})
 
-	//TODO: récupérer les messages de la conv actuellement affichée
+function change_conv(id) {
 	conversationService
-		.getMessagesByConvId(1)
+		.getMessagesByConvId(id)
 		.then((response) => {
 			messages.value = response.data.data
 		})
 		.catch((error) => {
 			console.log(error)
 		})
-})
+}
 </script>
 <template>
 	<div class="home">
@@ -48,7 +59,9 @@ onMounted(() => {
 				<button>Filtres</button>
 			</div>
 			<div class="conversations-list">
-				<div v-for="conv in conversations">{{ conv.name }}</div>
+				<div v-for="conv in conversations" @click="change_conv(conv.conversation_id)">
+					{{ conv.name }}
+				</div>
 			</div>
 			<div class="buttons">
 				<button>Créer une conversation</button>
