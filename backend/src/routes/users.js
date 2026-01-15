@@ -1,6 +1,6 @@
 import express from "express";
 import { success } from "../routes/helper.js";
-import { User } from "../db/sequelize.js";
+import { User, Conversation } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
 
 const userRouter = express();
@@ -47,6 +47,34 @@ userRouter.get("/:id", auth, (req, res) => {
     })
     .catch((error) => {
       const message = `L'utilisateur n'a pas pu être récupéré. Veuillez reéssayer dans quelques instants.`;
+      res.status(500).json({ message, data: error });
+    });
+});
+
+userRouter.get("/:id/conversations", auth, (req, res) => {
+  User.findByPk(req.params.id, {
+      attributes: { exclude: ["password"] }, // évite d'envoyer le mot de passe
+      include: [
+        {
+          model: Conversation,
+          attributes: ["conversation_id", "name", "admin_user_id"],
+          through: {
+            attributes: [],//ne pas renvoyer la table intermédiaire (userConversation)
+          },
+        },
+      ],
+    })
+    .then((user) => {
+      if (user === null) {
+        const message = `L'utilisateur demandé n'existe pas. Merci de réessayer avec un autre identifiant.`;
+        return res.status(404).json({ message });
+      }
+
+      const message = `Les conversations de l'utilisateur dont l'id vaut ${user.user_id} ont bien été récupérées !`;
+      res.json(success(message, user.Conversations));
+    })
+    .catch((error) => {
+      const message = `Les conversations de l'utilisateur n'ont pas pu être récupérées. Veuillez reéssayer dans quelques instants.`;
       res.status(500).json({ message, data: error });
     });
 });
