@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
+import messageService from '@/services/messageService'
 
 const conversations = ref(null)
 const messages = ref(null)
@@ -10,6 +11,7 @@ const shownConvId = ref(null)
 const showCreateConv = ref(false)
 const convName = ref('')
 const messageToSend = ref('')
+const messageMenuShown = ref(null) //id of the message where the menu is shown
 
 //TODO: menu edit/delete sur les messages
 //TODO: ordre des messages
@@ -91,6 +93,25 @@ async function sendMessage() {
 			console.log(error)
 		})
 }
+
+function showMessageMenu(id) {
+	messageMenuShown.value = id
+}
+
+function closeMessageMenu() {
+	messageMenuShown.value = null
+}
+
+async function deleteMessage(messageId) {
+	messageService
+		.deletedMessage(messageId)
+		.then((response) => {
+			console.log(response.data)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 <template>
 	<div class="home">
@@ -130,9 +151,22 @@ async function sendMessage() {
 					v-for="message in messages"
 					class="message"
 					:class="{ 'self-message': message.user_id == user.user_id }"
+					@click="showMessageMenu(message.message_id)"
 				>
 					<div class="message-sender">{{ message.user_id }}</div>
 					<div class="message-text">{{ message.text }}</div>
+					<div
+						class="message-menu"
+						v-if="messageMenuShown && messageMenuShown == message.message_id"
+					>
+						<button><img src="../assets/edit.png" /></button>
+						<button @click="deleteMessage(message.message_id)">
+							<img src="../assets/delete.png" />
+						</button>
+						<button @click.stop="closeMessageMenu">
+							<img src="../assets/close.png" />
+						</button>
+					</div>
 				</div>
 			</div>
 			<div class="message-bar">
@@ -230,6 +264,15 @@ async function sendMessage() {
 	background: blue;
 	padding: 8px 12px;
 	width: fit-content;
+}
+
+.message-menu button {
+	width: 40px;
+	margin: 5px;
+}
+
+.message-menu button img {
+	width: 100%;
 }
 
 .self-message {
