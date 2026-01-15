@@ -5,107 +5,104 @@ import userService from './services/userService'
 const user = ref(null)
 
 onMounted(() => {
-  userService.getCurrentUser()
-    .then((response) => {
-      user.value = response.data
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+	userService
+		.getCurrentUser()
+		.then((response) => {
+			user.value = response.data
+		})
+		.catch((error) => {
+			console.log(error)
+		})
 })
-
 </script>
 
 <template>
-  <div id="layout">
-    <header>
-      <nav class="nav">
-        <div v-if="user != null">{{ user.name }}</div>
-        <div class="nav-buttons">
+	<div id="layout">
+		<header>
+			<nav class="nav">
+				<div v-if="user != null">{{ user.name }}</div>
+				<div class="nav-buttons">
+					<RouterLink v-if="user?.user_id == null" to="/login">
+						<button>Connexion</button>
+					</RouterLink>
 
-          <RouterLink v-if="user?.user_id == null" to="/login">
-            <button>Connexion</button>
-          </RouterLink>
+					<RouterLink v-if="user?.user_id == null" to="/register">
+						<button>Inscription</button>
+					</RouterLink>
 
-          <RouterLink v-if="user?.user_id == null" to="/register">
-            <button>Inscription</button>
-          </RouterLink>
+					<button v-if="user && user?.user_id !== null" @click="handleLogout">
+						Déconnexion
+					</button>
+				</div>
+			</nav>
+		</header>
 
-          <button v-if="user && user?.user_id !== null" @click="handleLogout">
-            Déconnexion
-          </button>
-        </div>
-      </nav>
-    </header>
+		<main class="content">
+			<RouterView />
+		</main>
 
-    <main class="content">
-      <RouterView />
-    </main>
-
-    <!-- <footer>
+		<!-- <footer>
       <p><strong>Site créé par</strong></p>
       <ul>
         <li>Bastien Segalen (bastien.segalen@eduvaud.ch)</li>
       </ul>
     </footer> -->
-  </div>
+	</div>
 </template>
-
 
 <style scoped>
 #layout {
-  height: 97vh;
-  display: flex;
-  flex-direction: column;
-  color: #fff;
-  font-family: Helvetica, Arial, sans-serif;
+	height: 97vh;
+	display: flex;
+	flex-direction: column;
+	color: #fff;
+	font-family: Helvetica, Arial, sans-serif;
 }
 
 header {
-  padding: 15px 24px;
-  border-bottom: 1px solid #333333;
-  height: 3vh;
+	padding: 15px 24px;
+	border-bottom: 1px solid #333333;
+	height: 3vh;
 }
 
 .nav {
-  display: flex;
-  justify-content: flex-end;
+	display: flex;
+	justify-content: flex-end;
 }
 
 .nav button {
-  margin-left: 5px;
-  margin-right: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 .content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px;
-  padding-bottom: 0px;
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	padding: 40px 20px;
+	padding-bottom: 0px;
 }
 
 footer {
-  padding: 20px 0;
-  text-align: center;
-  font-size: 14px;
-  color: #bbb;
-  border-top: 1px solid #222;
+	padding: 20px 0;
+	text-align: center;
+	font-size: 14px;
+	color: #bbb;
+	border-top: 1px solid #222;
 }
 
 footer p {
-  margin: 0;
-  color: #fff;
+	margin: 0;
+	color: #fff;
 }
 
 footer ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 8px;
+	list-style: none;
+	padding: 0;
+	margin-top: 8px;
 }
 
 footer li {
-  margin: 4px 0;
+	margin: 4px 0;
 }
 </style>
-

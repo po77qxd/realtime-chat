@@ -1,23 +1,23 @@
-import axios from "axios";
+import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000/api/users/',
-  withCredentials: true,
-  headers: {
-    "Accept": 'application/json',
-    "Content-Type": 'application/json',
-  },
+	baseURL: 'http://localhost:3000/api/users/',
+	withCredentials: true,
+	headers: {
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
+	},
 })
 
 async function getCurrentUser() {
-  return apiClient.get('/currentUser')
+	return apiClient.get('/currentUser')
 }
 
 async function getUserConversations(id) {
-  return apiClient.get(`/${id}/conversations`)
+	return apiClient.get(`/${id}/conversations`)
 }
 
 export default {
-  getCurrentUser,
-  getUserConversations
+	getCurrentUser,
+	getUserConversations,
 }
