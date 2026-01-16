@@ -4,10 +4,12 @@ import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
 import messageService from '@/services/messageService'
 import userConversationService from '@/services/userConversationService'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 const conversations = ref(null)
 const messages = ref(null)
-const user = ref(null)
 const shownConvId = ref(null)
 const showCreateConv = ref(false)
 const convName = ref('')
@@ -20,12 +22,11 @@ const convToJoinList = ref(null)
 const searchConvValue = ref(null)
 
 onMounted(() => {
-	userService
+	userStore
 		.getCurrentUser()
 		.then((response) => {
-			user.value = response.data
 			userService
-				.getUserConversations(user.value.user_id)
+				.getUserConversations(userStore.user.user_id)
 				.then((response) => {
 					conversations.value = response.data.data
 					shownConvId.value = conversations.value[0].conversation_id
@@ -161,7 +162,7 @@ function showJoinConv() {
 	joinConvShown.value = true
 
 	userService
-		.getUserConversations(user.value.user_id)
+		.getUserConversations(userStore.user.user_id)
 		.then((response) => {
 			conversations.value = response.data.data
 			conversationService
@@ -197,7 +198,7 @@ async function joinConv(convId) {
 
 async function searchConv() {
 	userService
-		.getUserConversations(user.value.user_id, searchConvValue.value)
+		.getUserConversations(userStore.user.user_id, searchConvValue.value)
 		.then((response) => {
 			console.log(response.data.data)
 			conversations.value = response.data.data
@@ -261,7 +262,7 @@ async function searchConv() {
 				<div
 					v-for="message in messages"
 					class="message"
-					:class="{ 'self-message': message.user_id == user.user_id }"
+					:class="{ 'self-message': message.user_id == userStore.user.user_id }"
 				>
 					<div class="message-sender">{{ message.User.name }}</div>
 					<div
