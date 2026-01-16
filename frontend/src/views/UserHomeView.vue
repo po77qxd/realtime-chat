@@ -315,7 +315,7 @@ async function deleteMessage(messageId) {
 }
 
 .message-sender {
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: bold;
 	margin-top: 5px;
 }
