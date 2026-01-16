@@ -15,6 +15,8 @@ const messageToSend = ref('')
 const messageMenuShown = ref(null) //id of the message where the menu is shown
 const editInputShown = ref(null) //id of the message being modified
 const messagetoEdit = ref(null)
+const joinConvShown = ref(false)
+const convToJoinList = ref(null)
 
 onMounted(() => {
 	userService
@@ -147,6 +149,39 @@ async function deleteMessage(messageId) {
 			console.log(error)
 		})
 }
+
+function showJoinConv() {
+	if (joinConvShown.value) {
+		joinConvShown.value = false
+		return
+	}
+
+	joinConvShown.value = true
+
+	conversationService
+		.getConversations()
+		.then((response) => {
+			//filtrer les conv pour ne montrer que celle que l'utilisateur n'a pas.
+			convToJoinList.value = response.data.data.filter(
+				(conv) =>
+					!conversations.value.find((c) => c.conversation_id == conv.conversation_id),
+			)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
+
+async function joinConv(convId) {
+	userConversationService
+		.addUserToConv(convId)
+		.then((response) => {
+			joinConvShown.value = false
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 <template>
 	<div class="home">
@@ -161,8 +196,16 @@ async function deleteMessage(messageId) {
 					v-for="conv in conversations"
 					@click="change_conv(conv.conversation_id)"
 					:class="{ selectedConv: shownConvId == conv.conversation_id }"
+					v-if="!joinConvShown"
 				>
 					{{ conv.name }}
+				</div>
+				<div v-for="conv in convToJoinList" v-else class="convToJoinList">
+					<div>{{ conv.name }}</div>
+					<button @click="joinConv(conv.conversation_id)">Rejoindre</button>
+				</div>
+				<div v-if="!convToJoinList.length && joinConvShown">
+					Pas de conversation à rejoindre
 				</div>
 			</div>
 
@@ -177,7 +220,9 @@ async function deleteMessage(messageId) {
 
 			<div class="buttons">
 				<button @click="showCreateConvForm">Créer une conversation</button>
-				<button>Rejoindre une conversation</button>
+				<button @click="showJoinConv">
+					{{ !joinConvShown ? 'Rejoindre une conversation' : 'Mes conversations' }}
+				</button>
 			</div>
 		</div>
 		<div class="current-conv">
@@ -278,6 +323,16 @@ async function deleteMessage(messageId) {
 .conversations-list div {
 	padding: 6px 0;
 	cursor: pointer;
+}
+
+.convToJoinList {
+	display: flex;
+	justify-content: space-between;
+}
+
+.convToJoinList button {
+	margin-right: 25px;
+	padding: 7px;
 }
 
 .selectedConv {
