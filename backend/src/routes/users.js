@@ -59,6 +59,7 @@ userRouter.get("/:id/conversations", auth, (req, res) => {
 			{
 				model: Conversation,
 				attributes: ["conversation_id", "name", "admin_user_id"],
+				required: false,
 				where: {
 					name: {
 						[Op.substring]: req.query.name,
