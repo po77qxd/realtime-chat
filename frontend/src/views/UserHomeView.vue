@@ -142,8 +142,8 @@ async function editMessage(message_id) {
 }
 
 async function deleteMessage(messageId) {
-	messageService
-		.deletedMessage(messageId)
+	conversationService
+		.deletedMessage(messageId, shownConvId.value)
 		.then((response) => {
 			console.log(response.data)
 		})

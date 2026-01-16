@@ -2,6 +2,7 @@ import express from "express";
 import { success } from "../routes/helper.js";
 import { Conversation, Message, User } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
+import messageMiddleware from "../middlewares/messageMiddleware.js ";
 
 const conversationRouter = express();
 
@@ -112,6 +113,18 @@ conversationRouter.post("/:id/messages", auth, (req, res) => {
 		})
 		.catch((error) => {
 			const message = `Le message n'a n'a pas pu être crée. Merci de réessayer dans quelques instants.`;
+			res.status(500).json({ message, data: error });
+		});
+});
+
+conversationRouter.delete("/:id/messages/:message_id", auth, messageMiddleware, (req, res) => {
+	Message.destroy({ where: { message_id: req.params.message_id } })
+		.then((deletedMessage) => {
+			const message = `le message ${req.params.id} a bien été supprimé.`;
+			res.json(success(message, deletedMessage));
+		})
+		.catch((error) => {
+			const message = `Le message n'a n'a pas pu être supprimé. Merci de réessayer dans quelques instants.`;
 			res.status(500).json({ message, data: error });
 		});
 });

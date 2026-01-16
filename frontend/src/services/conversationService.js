@@ -25,9 +25,14 @@ async function sendMessage(id, message) {
 	return apiClient.post(`/${id}/messages`, { text: message })
 }
 
+async function deletedMessage(id, convId) {
+	return apiClient.delete(`/${convId}/messages/${id}`)
+}
+
 export default {
 	getConversations,
 	getMessagesByConvId,
 	createConv,
 	sendMessage,
+	deletedMessage,
 }
