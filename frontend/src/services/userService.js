@@ -14,7 +14,7 @@ async function getCurrentUser() {
 }
 
 async function getUserConversations(id) {
-	return apiClient.get(`/${id}/conversations`)
+	return apiClient.get(`/${id}/conversations?name=`)
 }
 
 async function logoutUser() {
