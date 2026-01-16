@@ -17,6 +17,7 @@ const editInputShown = ref(null) //id of the message being modified
 const messagetoEdit = ref(null)
 const joinConvShown = ref(false)
 const convToJoinList = ref(null)
+const searchConvValue = ref(null)
 
 onMounted(() => {
 	userService
@@ -182,13 +183,30 @@ async function joinConv(convId) {
 			console.log(error)
 		})
 }
+
+async function searchConv() {
+	userService
+		.getUserConversations(user.value.user_id, searchConvValue.value)
+		.then((response) => {
+			console.log(response.data.data)
+			conversations.value = response.data.data
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 <template>
 	<div class="home">
 		<div class="conversations">
 			<div>Mes conversations</div>
 			<div class="filters">
-				<input type="text" placeholder="Rechercher" />
+				<input
+					type="text"
+					placeholder="Rechercher"
+					@input="searchConv"
+					v-model="searchConvValue"
+				/>
 				<button>Filtres</button>
 			</div>
 			<div class="conversations-list">
