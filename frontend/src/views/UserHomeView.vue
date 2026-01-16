@@ -210,15 +210,14 @@ async function searchConv() {
 <template>
 	<div class="home">
 		<div class="conversations">
-			<div>Mes conversations</div>
-			<div class="filters">
+			<div>{{ joinConvShown ? 'Rejoindre une conversation' : 'Mes conversations' }}</div>
+			<div class="filters" v-if="!joinConvShown">
 				<input
 					type="text"
 					placeholder="Rechercher"
 					@input="searchConv"
 					v-model="searchConvValue"
 				/>
-				<button>Filtres</button>
 			</div>
 			<div class="conversations-list">
 				<div v-if="!conversations?.length && !joinConvShown">
@@ -340,6 +339,7 @@ async function searchConv() {
 	flex: 1;
 	padding: 10px;
 	border-radius: 5px;
+	margin-right: 10px;
 }
 
 .filters button {
@@ -355,6 +355,7 @@ async function searchConv() {
 .conversations-list div {
 	padding: 6px 0;
 	cursor: pointer;
+	margin-right: 10px;
 }
 
 .convToJoinList {
