@@ -153,20 +153,31 @@ async function deleteMessage(messageId) {
 
 function showJoinConv() {
 	if (joinConvShown.value) {
+		searchConv()
 		joinConvShown.value = false
 		return
 	}
 
 	joinConvShown.value = true
 
-	conversationService
-		.getConversations()
+	userService
+		.getUserConversations(user.value.user_id)
 		.then((response) => {
-			//filtrer les conv pour ne montrer que celle que l'utilisateur n'a pas.
-			convToJoinList.value = response.data.data.filter(
-				(conv) =>
-					!conversations.value.find((c) => c.conversation_id == conv.conversation_id),
-			)
+			conversations.value = response.data.data
+			conversationService
+				.getConversations()
+				.then((response) => {
+					//filtrer les conv pour ne montrer que celle que l'utilisateur n'a pas.
+					convToJoinList.value = response.data.data.filter(
+						(conv) =>
+							!conversations.value.find(
+								(c) => c.conversation_id == conv.conversation_id,
+							),
+					)
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		})
 		.catch((error) => {
 			console.log(error)
