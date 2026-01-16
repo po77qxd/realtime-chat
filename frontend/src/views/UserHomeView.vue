@@ -231,12 +231,12 @@ async function joinConv(convId) {
 					v-for="message in messages"
 					class="message"
 					:class="{ 'self-message': message.user_id == user.user_id }"
-					@click="showMessageMenu(message.message_id)"
 				>
 					<div class="message-sender">{{ message.User.name }}</div>
 					<div
 						class="message-text"
 						v-if="!editInputShown || editInputShown != message.message_id"
+						@click="showMessageMenu(message.message_id)"
 					>
 						{{ message.text }}
 					</div>
