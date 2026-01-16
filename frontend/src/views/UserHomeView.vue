@@ -204,7 +204,7 @@ async function joinConv(convId) {
 					<div>{{ conv.name }}</div>
 					<button @click="joinConv(conv.conversation_id)">Rejoindre</button>
 				</div>
-				<div v-if="!convToJoinList.length && joinConvShown">
+				<div v-if="!convToJoinList?.length && joinConvShown">
 					Pas de conversation à rejoindre
 				</div>
 			</div>
