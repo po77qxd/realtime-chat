@@ -13,6 +13,8 @@ const showCreateConv = ref(false)
 const convName = ref('')
 const messageToSend = ref('')
 const messageMenuShown = ref(null) //id of the message where the menu is shown
+const editInputShown = ref(null) //id of the message being modified
+const messagetoEdit = ref(null)
 
 //TODO: menu edit/delete sur les messages
 //TODO: ordre des messages
@@ -111,6 +113,30 @@ function closeMessageMenu() {
 	messageMenuShown.value = null
 }
 
+async function showEditMessage(message) {
+	editInputShown.value = message.message_id
+	messagetoEdit.value = message.text
+}
+
+function closeEditMessage() {
+	editInputShown.value = null
+	messagetoEdit.value = ''
+}
+
+async function editMessage(message_id) {
+	if (!messagetoEdit.value.trim()) return
+
+	messageService
+		.editMessage(message_id, messagetoEdit.value)
+		.then((response) => {
+			closeEditMessage()
+			//console.log(response.data.data)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
+
 async function deleteMessage(messageId) {
 	messageService
 		.deletedMessage(messageId)
@@ -163,12 +189,34 @@ async function deleteMessage(messageId) {
 					@click="showMessageMenu(message.message_id)"
 				>
 					<div class="message-sender">{{ message.user_id }}</div>
-					<div class="message-text">{{ message.text }}</div>
+					<div
+						class="message-text"
+						v-if="!editInputShown || editInputShown != message.message_id"
+					>
+						{{ message.text }}
+					</div>
+					<form
+						class="edit-message"
+						v-else
+						@submit.prevent="editMessage(message.message_id)"
+					>
+						<input
+							type="text"
+							placeholder="Modifier le message"
+							v-model="messagetoEdit"
+						/>
+						<button @click="closeEditMessage" type="button">
+							<img src="../assets/close.png" />
+						</button>
+						<button type="submit"><img src="../assets/check.png" /></button>
+					</form>
 					<div
 						class="message-menu"
 						v-if="messageMenuShown && messageMenuShown == message.message_id"
 					>
-						<button><img src="../assets/edit.png" /></button>
+						<button @click="showEditMessage(message)">
+							<img src="../assets/edit.png" />
+						</button>
 						<button @click="deleteMessage(message.message_id)">
 							<img src="../assets/delete.png" />
 						</button>
@@ -281,6 +329,20 @@ async function deleteMessage(messageId) {
 }
 
 .message-menu button img {
+	width: 100%;
+}
+
+.edit-message input {
+	padding: 10px;
+	margin: 5px;
+}
+
+.edit-message button {
+	width: 40px;
+	margin: 5px;
+}
+
+.edit-message button img {
 	width: 100%;
 }
 

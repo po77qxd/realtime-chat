@@ -9,10 +9,15 @@ const apiClient = axios.create({
 	},
 })
 
+async function editMessage(id, text) {
+	return apiClient.put(`/${id}`, { text: text })
+}
+
 async function deletedMessage(id) {
 	return apiClient.delete(`/${id}`)
 }
 
 export default {
+	editMessage,
 	deletedMessage,
 }
