@@ -210,6 +210,9 @@ async function searchConv() {
 				<button>Filtres</button>
 			</div>
 			<div class="conversations-list">
+				<div v-if="!conversations?.length && !joinConvShown">
+					Pas de conversation correspondant à la recherche
+				</div>
 				<div
 					v-for="conv in conversations"
 					@click="change_conv(conv.conversation_id)"
