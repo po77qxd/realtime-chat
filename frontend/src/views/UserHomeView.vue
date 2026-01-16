@@ -374,6 +374,7 @@ async function deleteMessage(messageId) {
 .message-bar {
 	width: 100%;
 	margin-left: 10px;
+	margin-top: 15px;
 }
 
 .message-bar input {
