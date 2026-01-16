@@ -2,6 +2,7 @@ import express from "express";
 import { success } from "../routes/helper.js";
 import { User, Conversation } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
+import { Op } from "sequelize";
 
 const userRouter = express();
 
@@ -58,6 +59,11 @@ userRouter.get("/:id/conversations", auth, (req, res) => {
 			{
 				model: Conversation,
 				attributes: ["conversation_id", "name", "admin_user_id"],
+				where: {
+					name: {
+						[Op.substring]: req.query.name,
+					},
+				},
 				through: {
 					attributes: [], //ne pas renvoyer la table intermédiaire (userConversation)
 				},
