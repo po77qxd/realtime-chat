@@ -1,6 +1,6 @@
 import express from "express";
 import { success } from "../routes/helper.js";
-import { Conversation, Message } from "../db/sequelize.js";
+import { Conversation, Message, User } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
 
 const conversationRouter = express();
@@ -80,7 +80,16 @@ conversationRouter.delete("/:id", auth, (req, res) => {
 
 // MESSAGES //
 conversationRouter.get("/:id/messages", auth, (req, res) => {
-	Message.findAll({ where: { conversation_id: req.params.id }, order: ["timestamp_"] })
+	Message.findAll({
+		where: { conversation_id: req.params.id },
+		order: ["timestamp_"],
+		include: [
+			{
+				model: User,
+				attributes: ["name"],
+			},
+		],
+	})
 		.then((messages) => {
 			const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
 			res.json(success(message, messages));
