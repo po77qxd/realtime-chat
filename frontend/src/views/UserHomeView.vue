@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
 import messageService from '@/services/messageService'
+import userConversationService from '@/services/userConversationService'
 
 const conversations = ref(null)
 const messages = ref(null)
@@ -73,7 +74,15 @@ async function createConv() {
 		.createConv(convName.value)
 		.then((response) => {
 			closeCreateConvForm()
-			change_conv(response.data.data.conversation_id)
+
+			userConversationService
+				.addUserToConv(response.data.data.conversation_id)
+				.then((response) => {
+					change_conv(response.data.data.conversation_id)
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		})
 		.catch((error) => {
 			console.log(error)
