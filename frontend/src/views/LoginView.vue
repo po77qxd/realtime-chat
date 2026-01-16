@@ -11,7 +11,7 @@ async function handleSubmit() {
 	try {
 		const response = await AuthService.loginUser(user.value.email, user.value.password)
 		//console.log(response.data)
-		router.push('/')
+		router.push('/home')
 	} catch (error) {
 		console.error('Login error:' + error)
 	}
