@@ -73,6 +73,7 @@ function logout() {
 	flex-direction: column;
 	color: #fff;
 	font-family: Helvetica, Arial, sans-serif;
+	max-height: 100vh;
 }
 
 header {
@@ -95,7 +96,7 @@ header {
 	flex: 1;
 	display: flex;
 	justify-content: center;
-	padding: 40px 20px;
+	padding: 20px 20px;
 	padding-bottom: 0px;
 }
 

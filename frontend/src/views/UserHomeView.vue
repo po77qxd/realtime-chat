@@ -242,6 +242,7 @@ async function deleteMessage(messageId) {
 .home {
 	display: flex;
 	width: 100%;
+	height: 90vh;
 }
 
 .conversations {
@@ -299,6 +300,7 @@ async function deleteMessage(messageId) {
 	display: flex;
 	flex-direction: column;
 	margin-left: 15px;
+	/* max-height: 100%; */
 }
 
 .messages {
