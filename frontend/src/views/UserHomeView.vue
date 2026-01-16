@@ -322,6 +322,13 @@ async function deleteMessage(messageId) {
 	background: blue;
 	padding: 8px 12px;
 	width: fit-content;
+	max-width: 50%;
+
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	overflow-wrap: anywhere;
+	text-align: left;
+	white-space: normal;
 }
 
 .message-menu button {
