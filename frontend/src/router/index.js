@@ -33,12 +33,12 @@ router.beforeEach(async (to, from, next) => {
 	if (to.meta.requiresAuth) {
 		try {
 			await userService.getCurrentUser()
-			next()
+			return next()
 		} catch (err) {
 			router.push('/login') // redirect to login
 		}
 	} else {
-		next()
+		return next()
 	}
 })
 
