@@ -188,7 +188,7 @@ async function deleteMessage(messageId) {
 					:class="{ 'self-message': message.user_id == user.user_id }"
 					@click="showMessageMenu(message.message_id)"
 				>
-					<div class="message-sender">{{ message.user_id }}</div>
+					<div class="message-sender">{{ message.User.name }}</div>
 					<div
 						class="message-text"
 						v-if="!editInputShown || editInputShown != message.message_id"
@@ -315,6 +315,7 @@ async function deleteMessage(messageId) {
 .message-sender {
 	font-size: 12px;
 	font-weight: bold;
+	margin-top: 5px;
 }
 
 .message-text {
