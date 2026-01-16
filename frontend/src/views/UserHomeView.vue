@@ -16,9 +16,6 @@ const messageMenuShown = ref(null) //id of the message where the menu is shown
 const editInputShown = ref(null) //id of the message being modified
 const messagetoEdit = ref(null)
 
-//TODO: menu edit/delete sur les messages
-//TODO: ordre des messages
-
 onMounted(() => {
 	userService
 		.getCurrentUser()
@@ -111,6 +108,9 @@ function showMessageMenu(id) {
 
 function closeMessageMenu() {
 	messageMenuShown.value = null
+	//close the edit menu too
+	editInputShown.value = null
+	messagetoEdit.value = ''
 }
 
 async function showEditMessage(message) {
