@@ -2,15 +2,16 @@
 import { ref } from 'vue'
 import AuthService from '@/services/authService'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
-
+const userStore = useUserStore()
 const user = ref({ email: '', password: '' })
 
 async function handleSubmit() {
 	try {
 		const response = await AuthService.loginUser(user.value.email, user.value.password)
-		//console.log(response.data)
+		userStore.setUser(response.data.data)
 		router.push('/home')
 	} catch (error) {
 		console.error('Login error:' + error)

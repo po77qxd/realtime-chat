@@ -2,20 +2,14 @@
 import { ref, onMounted } from 'vue'
 import userService from './services/userService'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
-
+const userStore = useUserStore()
 const user = ref(null)
 
 onMounted(() => {
-	userService
-		.getCurrentUser()
-		.then((response) => {
-			user.value = response.data
-		})
-		.catch((error) => {
-			console.log(error)
-		})
+	userStore.getCurrentUser()
 })
 
 function logout() {
@@ -23,7 +17,7 @@ function logout() {
 		.logoutUser()
 		.then((response) => {
 			//console.log(response.data)
-			user.value = null
+			userStore.logout()
 			router.push('/')
 		})
 		.catch((error) => {
@@ -36,17 +30,20 @@ function logout() {
 	<div id="layout">
 		<header>
 			<nav class="nav">
-				<div v-if="user != null">{{ user.name }}</div>
+				<div v-if="userStore.user != null">{{ userStore.user.name }}</div>
 				<div class="nav-buttons">
-					<RouterLink v-if="user?.user_id == null" to="/login">
+					<RouterLink v-if="userStore.user?.user_id == null" to="/login">
 						<button>Connexion</button>
 					</RouterLink>
 
-					<RouterLink v-if="user?.user_id == null" to="/register">
+					<RouterLink v-if="userStore.user?.user_id == null" to="/register">
 						<button>Inscription</button>
 					</RouterLink>
 
-					<button v-if="user && user?.user_id !== null" @click="logout">
+					<button
+						v-if="userStore.user && userStore.user?.user_id !== null"
+						@click="logout"
+					>
 						Déconnexion
 					</button>
 				</div>
