@@ -300,7 +300,12 @@ async function searchConv() {
 					</form>
 					<div
 						class="message-menu"
-						v-if="messageMenuShown && messageMenuShown == message.message_id"
+						v-if="
+							messageMenuShown &&
+							messageMenuShown == message.message_id &&
+							(message.user_id == userStore.user.user_id || //afficher le menu seulement sur nos message ou sur tout les message si on est l'admin de la conversation actuelle
+								userStore.user.user_id == shownConvAdminId)
+						"
 					>
 						<button @click="showEditMessage(message)">
 							<img src="../assets/edit.png" />
