@@ -110,7 +110,21 @@ conversationRouter.post("/:id/messages", auth, (req, res) => {
 	})
 		.then((createdMessage) => {
 			const message = `le message ${createdMessage.message_id} a bien été crée.`;
-			res.json(success(message, createdMessage));
+
+			User.findByPk(createdMessage.user_id, {
+				attributes: { exclude: ["password", "email", "user_id"] }, // évite d'envoyer le mot de passe
+			})
+				.then((user) => {
+					req.io.emit("new_message", {
+						...createdMessage.get({ plain: true }),
+						User: user,
+					});
+					res.json(success(message, createdMessage));
+				})
+				.catch((error) => {
+					const message = `L'utilisateur n'a pas pu être récupéré. Veuillez reéssayer dans quelques instants.`;
+					res.status(500).json({ message, data: error });
+				});
 		})
 		.catch((error) => {
 			const message = `Le message n'a n'a pas pu être crée. Merci de réessayer dans quelques instants.`;

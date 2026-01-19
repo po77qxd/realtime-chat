@@ -27,9 +27,9 @@ const editConvId = ref(null)
 const convToEdit = ref(null)
 
 //sockets:
-socket.on('message:new', (message) => {
+socket.on('new_message', (message) => {
 	console.log('message received: ' + message.text)
-	messages.value.push(message) //conv?
+	messages.value.push(message) //TODO: prendre en compte la conversation
 })
 
 onMounted(() => {
@@ -116,21 +116,15 @@ async function createConv() {
 async function sendMessage() {
 	if (!messageToSend.value.trim()) return
 
-	socket.emit('message:send', {
-		convId: shownConvId.value,
-		text: messageToSend.value,
-		User: { user_id: 1, name: 'testuser' },
-	})
-	messageToSend.value = ''
-	// conversationService
-	// 	.sendMessage(shownConvId.value, messageToSend.value)
-	// 	.then((response) => {
-	// 		messageToSend.value = ''
-	// 		//console.log(response.data.data)
-	// 	})
-	// 	.catch((error) => {
-	// 		console.log(error)
-	// 	})
+	conversationService
+		.sendMessage(shownConvId.value, messageToSend.value)
+		.then((response) => {
+			messageToSend.value = ''
+			//console.log(response.data.data)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
 }
 
 function showMessageMenu(id) {

@@ -21,6 +21,11 @@ app.use(
 	})
 );
 
+app.use((req, res, next) => {
+	req.io = io;
+	next();
+});
+
 app.get("/", (req, res) => {
 	res.json({ mesage: "hello" });
 });
@@ -69,12 +74,6 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
 	socket.on("message:send", async (data) => {
-		Message.create({
-			text: data.text,
-			conversation_id: data.convId,
-			user_id: data.User.user_id,
-		});
-
 		console.log("message to tranmit: " + data.text);
 		io.emit("message:new", data);
 	});
