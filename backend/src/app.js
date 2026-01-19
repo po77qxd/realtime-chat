@@ -4,6 +4,9 @@ import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+import { createServer } from "http";
+import { Server } from "socket.io";
+
 const app = express();
 const port = 3000;
 
@@ -54,3 +57,20 @@ sequelize
 	.catch((error) => console.error("Erreur de connexion à la base de données"));
 
 initDb();
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+	cors: {
+		origin: ["http://localhost:3001", "http://localhost:5173"],
+	},
+});
+
+io.on("connection", (socket) => {
+	socket.emit("hello", "world");
+
+	socket.on("howdy", (arg) => {
+		console.log(arg);
+	});
+});
+
+httpServer.listen(3001);
