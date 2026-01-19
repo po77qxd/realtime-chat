@@ -1,4 +1,4 @@
-import { Conversation, Message, User } from "../db/sequelize.js";
+import { Conversation, Message } from "../db/sequelize.js";
 
 const messageMiddleware = async (req, res, next) => {
 	try {
@@ -21,7 +21,7 @@ const messageMiddleware = async (req, res, next) => {
 		if (req.user_id == conv.admin_user_id) return next();
 
 		return res.status(401).json({
-			message: "Accès refusé.",
+			message: "Accès refusé, vous n'avez pas les droits pour modifer/supprimer ce message.",
 		});
 	} catch (error) {
 		const message = `Erreur serveur.`;

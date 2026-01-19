@@ -130,8 +130,8 @@ function closeEditMessage() {
 async function editMessage(message_id) {
 	if (!messagetoEdit.value.trim()) return
 
-	messageService
-		.editMessage(message_id, messagetoEdit.value)
+	conversationService
+		.editMessage(message_id, shownConvId.value, messagetoEdit.value)
 		.then((response) => {
 			closeEditMessage()
 			//console.log(response.data.data)

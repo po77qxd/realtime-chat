@@ -25,6 +25,10 @@ async function sendMessage(id, message) {
 	return apiClient.post(`/${id}/messages`, { text: message })
 }
 
+async function editMessage(id, convId, text) {
+	return apiClient.put(`/${convId}/messages/${id}`, { text: text })
+}
+
 async function deletedMessage(id, convId) {
 	return apiClient.delete(`/${convId}/messages/${id}`)
 }
@@ -34,5 +38,6 @@ export default {
 	getMessagesByConvId,
 	createConv,
 	sendMessage,
+	editMessage,
 	deletedMessage,
 }
