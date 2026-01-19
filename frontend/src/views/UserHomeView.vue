@@ -28,8 +28,10 @@ const convToEdit = ref(null)
 
 //sockets:
 socket.on('new_message', (message) => {
+	if (message.conversation_id != shownConvId.value) return
+
 	console.log('message received: ' + message.text)
-	messages.value.push(message) //TODO: prendre en compte la conversation
+	messages.value.push(message)
 })
 
 onMounted(() => {
@@ -40,7 +42,7 @@ onMounted(() => {
 				.getUserConversations(userStore.user.user_id)
 				.then((response) => {
 					conversations.value = response.data.data
-					shownConvId.value = conversations.value[0].conversation_id
+					change_conv(conversations.value[0].conversation_id)
 					shownConvAdminId.value = conversations.value[0].admin_user_id
 
 					conversationService
@@ -62,6 +64,11 @@ onMounted(() => {
 })
 
 function change_conv(id) {
+	if (shownConvId.value) {
+		socket.emit('leave_conversation', shownConvId.value)
+	}
+	socket.emit('join_conversation', id)
+
 	shownConvId.value = id
 	conversationService
 		.getConversationById(id)

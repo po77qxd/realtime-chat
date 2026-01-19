@@ -73,9 +73,13 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-	socket.on("message:send", async (data) => {
-		console.log("message to tranmit: " + data.text);
-		io.emit("message:new", data);
+	socket.on("join_conversation", (conversationId) => {
+		socket.join(`conversation_${conversationId}`);
+		console.log(`Socket ${socket.id} a rejoint conversation_${conversationId}`);
+	});
+
+	socket.on("leave_conversation", (conversationId) => {
+		socket.leave(`conversation_${conversationId}`);
 	});
 });
 

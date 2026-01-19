@@ -115,7 +115,7 @@ conversationRouter.post("/:id/messages", auth, (req, res) => {
 				attributes: { exclude: ["password", "email", "user_id"] }, // évite d'envoyer le mot de passe
 			})
 				.then((user) => {
-					req.io.emit("new_message", {
+					req.io.to(`conversation_${req.params.id}`).emit("new_message", {
 						...createdMessage.get({ plain: true }),
 						User: user,
 					});
