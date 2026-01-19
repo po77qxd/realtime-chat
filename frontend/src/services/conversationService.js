@@ -25,6 +25,14 @@ async function createConv(name) {
 	return apiClient.post(`/`, { name: name })
 }
 
+async function editConv(id, name) {
+	return apiClient.put(`/${id}`, { name: name })
+}
+
+async function deleteConv(id) {
+	return apiClient.delete(`/${id}`)
+}
+
 async function sendMessage(id, message) {
 	return apiClient.post(`/${id}/messages`, { text: message })
 }
@@ -42,6 +50,8 @@ export default {
 	getConversationById,
 	getMessagesByConvId,
 	createConv,
+	editConv,
+	deleteConv,
 	sendMessage,
 	editMessage,
 	deletedMessage,

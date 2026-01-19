@@ -21,6 +21,8 @@ const messagetoEdit = ref(null)
 const joinConvShown = ref(false)
 const convToJoinList = ref(null)
 const searchConvValue = ref(null)
+const editConvId = ref(null)
+const convToEdit = ref(null)
 
 onMounted(() => {
 	userStore
@@ -218,6 +220,41 @@ async function searchConv() {
 			console.log(error)
 		})
 }
+
+function showEditConv(conv) {
+	editConvId.value = conv.conversation_id
+	convToEdit.value = conv.name
+}
+
+async function editConv(convId) {
+	if (!convToEdit.value.trim()) return
+
+	conversationService
+		.editConv(convId, convToEdit.value)
+		.then((response) => {
+			console.log(response.data.data)
+			closeEditConv()
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
+
+function closeEditConv() {
+	editConvId.value = null
+	convToEdit.value = null
+}
+
+async function deleteConv(convId) {
+	conversationService
+		.deleteConv(convId)
+		.then((response) => {
+			// console.log(response.data.data)
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+}
 </script>
 <template>
 	<div class="home">
@@ -239,9 +276,34 @@ async function searchConv() {
 					v-for="conv in conversations"
 					@click="change_conv(conv.conversation_id)"
 					:class="{ selectedConv: shownConvId == conv.conversation_id }"
+					class="conversation"
 					v-if="!joinConvShown"
 				>
-					{{ conv.name }}
+					<form
+						class="editConvForm"
+						v-if="conv.conversation_id && editConvId == conv.conversation_id"
+						@submit.prevent="editConv(conv.conversation_id)"
+					>
+						<input
+							type="text"
+							name="editConv"
+							placeholder="Modifier le nom"
+							v-model="convToEdit"
+						/>
+						<button @click="closeEditConv" type="button">
+							<img src="../assets/close.png" />
+						</button>
+						<button type="submit"><img src="../assets/check.png" /></button>
+					</form>
+					<div v-else>{{ conv.name }}</div>
+					<div class="convButtons">
+						<button @click="showEditConv(conv)">
+							<img src="../assets/edit.png" />
+						</button>
+						<button @click="deleteConv(conv.conversation_id)">
+							<img src="../assets/delete.png" />
+						</button>
+					</div>
 				</div>
 				<div v-for="conv in convToJoinList" v-else class="convToJoinList">
 					<div>{{ conv.name }}</div>
@@ -347,6 +409,38 @@ async function searchConv() {
 	margin-left: auto;
 }
 
+.conversation {
+	display: flex;
+	justify-content: space-between;
+}
+
+.convButtons button {
+	width: 35px;
+	margin-left: 5px;
+}
+
+.convButtons button img {
+	width: 100%;
+}
+
+.editConvForm {
+	display: flex;
+	align-items: center;
+}
+
+.editConvForm button {
+	width: 35px;
+	margin-left: 5px;
+}
+
+.editConvForm input {
+	padding: 5px;
+}
+
+.editConvForm button img {
+	width: 100%;
+}
+
 .filters {
 	display: flex;
 	gap: 8px;
@@ -370,7 +464,8 @@ async function searchConv() {
 }
 
 .conversations-list div {
-	padding: 6px 0;
+	/* padding: 6px 0; */
+	align-items: center;
 	cursor: pointer;
 	margin-right: 10px;
 }
