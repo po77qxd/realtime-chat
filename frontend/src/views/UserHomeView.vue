@@ -296,7 +296,7 @@ async function deleteConv(convId) {
 						<button type="submit"><img src="../assets/check.png" /></button>
 					</form>
 					<div v-else>{{ conv.name }}</div>
-					<div class="convButtons">
+					<div class="convButtons" v-if="conv.admin_user_id == userStore.user.user_id">
 						<button @click="showEditConv(conv)">
 							<img src="../assets/edit.png" />
 						</button>
@@ -412,10 +412,11 @@ async function deleteConv(convId) {
 .conversation {
 	display: flex;
 	justify-content: space-between;
+	height: 40px;
 }
 
 .convButtons button {
-	width: 35px;
+	width: 30px;
 	margin-left: 5px;
 }
 
