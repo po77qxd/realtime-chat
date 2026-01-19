@@ -11,6 +11,7 @@ const userStore = useUserStore()
 const conversations = ref(null)
 const messages = ref(null)
 const shownConvId = ref(null)
+const shownConvAdminId = ref(null)
 const showCreateConv = ref(false)
 const convName = ref('')
 const messageToSend = ref('')
@@ -30,6 +31,7 @@ onMounted(() => {
 				.then((response) => {
 					conversations.value = response.data.data
 					shownConvId.value = conversations.value[0].conversation_id
+					shownConvAdminId.value = conversations.value[0].admin_user_id
 
 					conversationService
 						.getMessagesByConvId(conversations.value[0].conversation_id) //par défaut on affiche les messages de la premiere conv
@@ -51,6 +53,15 @@ onMounted(() => {
 
 function change_conv(id) {
 	shownConvId.value = id
+	conversationService
+		.getConversationById(id)
+		.then((response) => {
+			shownConvAdminId.value = response.data.data.admin_user_id
+		})
+		.catch((error) => {
+			console.log(error)
+		})
+
 	conversationService
 		.getMessagesByConvId(id)
 		.then((response) => {

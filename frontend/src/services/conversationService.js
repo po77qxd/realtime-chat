@@ -13,6 +13,10 @@ async function getConversations() {
 	return apiClient.get('/')
 }
 
+async function getConversationById(id) {
+	return apiClient.get(`/${id}`)
+}
+
 async function getMessagesByConvId(id) {
 	return apiClient.get(`/${id}/messages`)
 }
@@ -35,6 +39,7 @@ async function deletedMessage(id, convId) {
 
 export default {
 	getConversations,
+	getConversationById,
 	getMessagesByConvId,
 	createConv,
 	sendMessage,
