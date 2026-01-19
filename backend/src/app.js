@@ -7,6 +7,8 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+import { Message } from "./db/sequelize.js";
+
 const app = express();
 const port = 3000;
 
@@ -66,10 +68,15 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-	socket.emit("hello", "world");
+	socket.on("message:send", async (data) => {
+		Message.create({
+			text: data.text,
+			conversation_id: data.convId,
+			user_id: data.User.user_id,
+		});
 
-	socket.on("howdy", (arg) => {
-		console.log(arg);
+		console.log("message to tranmit: " + data.text);
+		io.emit("message:new", data);
 	});
 });
 

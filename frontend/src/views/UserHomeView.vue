@@ -6,6 +6,8 @@ import messageService from '@/services/messageService'
 import userConversationService from '@/services/userConversationService'
 import { useUserStore } from '@/stores/user'
 
+import { socket } from '@/main'
+
 const userStore = useUserStore()
 
 const conversations = ref(null)
@@ -23,6 +25,12 @@ const convToJoinList = ref(null)
 const searchConvValue = ref(null)
 const editConvId = ref(null)
 const convToEdit = ref(null)
+
+//sockets:
+socket.on('message:new', (message) => {
+	console.log('message received: ' + message.text)
+	messages.value.push(message) //conv?
+})
 
 onMounted(() => {
 	userStore
@@ -108,15 +116,21 @@ async function createConv() {
 async function sendMessage() {
 	if (!messageToSend.value.trim()) return
 
-	conversationService
-		.sendMessage(shownConvId.value, messageToSend.value)
-		.then((response) => {
-			messageToSend.value = ''
-			//console.log(response.data.data)
-		})
-		.catch((error) => {
-			console.log(error)
-		})
+	socket.emit('message:send', {
+		convId: shownConvId.value,
+		text: messageToSend.value,
+		User: { user_id: 1, name: 'testuser' },
+	})
+	messageToSend.value = ''
+	// conversationService
+	// 	.sendMessage(shownConvId.value, messageToSend.value)
+	// 	.then((response) => {
+	// 		messageToSend.value = ''
+	// 		//console.log(response.data.data)
+	// 	})
+	// 	.catch((error) => {
+	// 		console.log(error)
+	// 	})
 }
 
 function showMessageMenu(id) {
