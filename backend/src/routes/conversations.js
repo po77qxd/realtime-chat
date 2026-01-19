@@ -117,6 +117,18 @@ conversationRouter.post("/:id/messages", auth, (req, res) => {
 		});
 });
 
+conversationRouter.put("/:id/messages/:message_id", auth, messageMiddleware, (req, res) => {
+	Message.update({ text: req.body.text }, { where: { message_id: req.params.message_id } })
+		.then((updatedMessage) => {
+			const message = `le message ${req.params.id} a bien été modifié.`;
+			res.json(success(message, updatedMessage));
+		})
+		.catch((error) => {
+			const message = `Le message n'a n'a pas pu être modifié. Merci de réessayer dans quelques instants.`;
+			res.status(500).json({ message, data: error });
+		});
+});
+
 conversationRouter.delete("/:id/messages/:message_id", auth, messageMiddleware, (req, res) => {
 	Message.destroy({ where: { message_id: req.params.message_id } })
 		.then((deletedMessage) => {

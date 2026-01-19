@@ -8,7 +8,7 @@ const messageMiddleware = async (req, res, next) => {
 			return res.status(404).json({ message });
 		}
 
-		// the user can delete their own messages
+		// the user can edit/delete their own messages
 		if (message.user_id == req.user_id) return next();
 
 		const conv = await Conversation.findByPk(req.params.id);
@@ -17,7 +17,7 @@ const messageMiddleware = async (req, res, next) => {
 			return res.status(404).json({ message });
 		}
 
-		// the conv admin can delete every message
+		// the conv admin can edit/delete every message
 		if (req.user_id == conv.admin_user_id) return next();
 
 		return res.status(401).json({
