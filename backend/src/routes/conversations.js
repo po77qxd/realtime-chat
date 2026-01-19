@@ -3,6 +3,7 @@ import { success } from "../routes/helper.js";
 import { Conversation, Message, User } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
 import messageMiddleware from "../middlewares/messageMiddleware.js ";
+import convMiddleware from "../middlewares/convMiddleware.js";
 
 const conversationRouter = express();
 
@@ -49,7 +50,7 @@ conversationRouter.post("/", auth, (req, res) => {
 		});
 });
 
-conversationRouter.put("/:id", auth, (req, res) => {
+conversationRouter.put("/:id", auth, convMiddleware, (req, res) => {
 	Conversation.update(
 		{
 			name: req.body.name,
@@ -67,7 +68,7 @@ conversationRouter.put("/:id", auth, (req, res) => {
 		});
 });
 
-conversationRouter.delete("/:id", auth, (req, res) => {
+conversationRouter.delete("/:id", auth, convMiddleware, (req, res) => {
 	Conversation.destroy({ where: { conversation_id: req.params.id } })
 		.then((deletedConv) => {
 			const message = `la conversation ${req.params.id} a bien été supprimée.`;
