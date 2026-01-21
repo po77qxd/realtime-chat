@@ -1,6 +1,6 @@
 import express from "express";
 import { success } from "../routes/helper.js";
-import { UserConversation, Conversation } from "../db/sequelize.js";
+import { UserConversation, Conversation, User } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
 
 const userConversationRouter = express();
@@ -16,6 +16,14 @@ userConversationRouter.post("/", auth, (req, res) => {
 			Conversation.findByPk(req.body.conv_id).then((conv) => {
 				req.io.to(`user_${req.user_id}`).emit("join_conv", {
 					...conv.get({ plain: true }),
+				});
+				//renvoyer le user a tout ce qui sont dans la conv actuelle
+				User.findByPk(req.user_id, {
+					attributes: { exclude: ["password", "email"] },
+				}).then((user) => {
+					req.io.to(`conversation_${req.body.conv_id}}`).emit("user_join_conv", {
+						...user.get({ plain: true }),
+					});
 				});
 
 				res.json(success(message, createdUserConv));

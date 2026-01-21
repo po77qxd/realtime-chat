@@ -75,6 +75,11 @@ socket.on('delete_conv', (conv_id) => {
 	if (shownConvId.value == conv_id) change_conv(conversations.value[0].conversation_id)
 })
 
+socket.on('user_join_conv', (user) => {
+	console.log(user.user_id)
+	userList.value.push(user)
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()
