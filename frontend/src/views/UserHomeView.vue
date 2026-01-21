@@ -26,6 +26,9 @@ const searchConvValue = ref(null)
 const editConvId = ref(null)
 const convToEdit = ref(null)
 
+const userList = ref(null)
+const userListShown = ref(false)
+
 const messagesContainer = ref(null)
 const isUserAtBottom = ref(true)
 const SCROLL_THRESHOLD = 50 //px
@@ -97,6 +100,15 @@ onMounted(() => {
 						.catch((error) => {
 							console.log(error)
 						})
+
+					conversationService
+						.getConvUsers(conversations.value[0].conversation_id)
+						.then((response) => {
+							userList.value = response.data.data
+						})
+						.catch((error) => {
+							console.log(error)
+						})
 				})
 				.catch((error) => {
 					console.log(error)
@@ -118,6 +130,15 @@ function change_conv(id) {
 		.getConversationById(id)
 		.then((response) => {
 			shownConvAdminId.value = response.data.data.admin_user_id
+
+			conversationService
+				.getConvUsers(response.data.data.conversation_id)
+				.then((response) => {
+					userList.value = response.data.data
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		})
 		.catch((error) => {
 			console.log(error)
@@ -340,6 +361,11 @@ function shouldShowUsername(index) {
 	//si le message precedant a été envoyé par un user différent, on affiche le username, sinon non
 	return messages.value[index].user_id != messages.value[index - 1].user_id
 }
+
+//hide or show userlist
+function handleUserListState() {
+	userListShown.value = !userListShown.value
+}
 </script>
 <template>
 	<div class="home">
@@ -478,6 +504,18 @@ function shouldShowUsername(index) {
 						<img src="../assets/send.png" />
 					</button>
 				</form>
+			</div>
+		</div>
+		<div
+			class="userList"
+			:class="{ userListShownClass: userListShown, userListHiddenClass: !userListShown }"
+		>
+			<button @click="handleUserListState">
+				{{ userListShown ? 'close userlist' : 'userlist' }}
+			</button>
+			<div class="userListTitle" v-if="userListShown">Utilisateurs</div>
+			<div v-for="user in userList" v-if="userListShown">
+				{{ user.name }}
 			</div>
 		</div>
 	</div>
@@ -713,5 +751,23 @@ function shouldShowUsername(index) {
 	padding: 5px;
 	width: 10%;
 	margin-left: 90%;
+}
+
+.userList div {
+	margin-bottom: 5px;
+}
+
+.userListTitle {
+	font-weight: bold;
+}
+
+.userListHiddenClass {
+	margin-left: -55px;
+}
+.userListShownClass {
+	width: 6%;
+	margin-left: 15px;
+	border-left: 1px solid gray;
+	padding-left: 5px;
 }
 </style>

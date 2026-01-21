@@ -45,6 +45,10 @@ async function deletedMessage(id, convId) {
 	return apiClient.delete(`/${convId}/messages/${id}`)
 }
 
+async function getConvUsers(convId) {
+	return apiClient.get(`/${convId}/users`)
+}
+
 export default {
 	getConversations,
 	getConversationById,
@@ -55,4 +59,5 @@ export default {
 	sendMessage,
 	editMessage,
 	deletedMessage,
+	getConvUsers,
 }
