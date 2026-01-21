@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
 import messageService from '@/services/messageService'
@@ -26,11 +26,20 @@ const searchConvValue = ref(null)
 const editConvId = ref(null)
 const convToEdit = ref(null)
 
+const messagesContainer = ref(null)
+const isUserAtBottom = ref(true)
+const SCROLL_THRESHOLD = 50 //px
+
 //sockets:
-socket.on('new_message', (message) => {
+socket.on('new_message', async (message) => {
 	if (message.conversation_id != shownConvId.value) return
 
 	messages.value.push(message)
+
+	if (!isUserAtBottom.value) return
+
+	await nextTick() // attendre que le DOM soit mis a jour
+	scrollToBottom()
 })
 
 socket.on('edit_message', (message) => {
@@ -116,8 +125,11 @@ function change_conv(id) {
 
 	conversationService
 		.getMessagesByConvId(id)
-		.then((response) => {
+		.then(async (response) => {
 			messages.value = response.data.data
+
+			await nextTick()
+			scrollToBottom()
 		})
 		.catch((error) => {
 			console.log(error)
@@ -309,6 +321,19 @@ async function deleteConv(convId) {
 			console.log(error)
 		})
 }
+
+function onScroll() {
+	const mc = messagesContainer.value
+	const distanceFromBottom = mc.scrollHeight - mc.scrollTop - mc.clientHeight
+
+	isUserAtBottom.value = distanceFromBottom < SCROLL_THRESHOLD
+}
+
+function scrollToBottom() {
+	const mc = messagesContainer.value
+
+	mc.scrollTop = mc.scrollHeight
+}
 </script>
 <template>
 	<div class="home">
@@ -385,7 +410,7 @@ async function deleteConv(convId) {
 			</div>
 		</div>
 		<div class="current-conv">
-			<div class="messages">
+			<div class="messages" @scroll="onScroll" ref="messagesContainer">
 				<div
 					v-for="message in messages"
 					class="message"
@@ -435,6 +460,9 @@ async function deleteConv(convId) {
 					</div>
 				</div>
 			</div>
+			<button v-if="!isUserAtBottom" class="newMessageButton" @click="scrollToBottom">
+				Nouveaux messages
+			</button>
 			<div class="message-bar">
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
 					<input type="text" placeholder="Envoyer un message" v-model="messageToSend" />
@@ -670,5 +698,11 @@ async function deleteConv(convId) {
 	width: 50%;
 	padding: 15px;
 	margin: 10px;
+}
+
+.newMessageButton {
+	padding: 5px;
+	width: 10%;
+	margin-left: 90%;
 }
 </style>
