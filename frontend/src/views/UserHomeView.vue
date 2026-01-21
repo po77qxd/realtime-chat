@@ -51,10 +51,18 @@ socket.on('delete_message', (message) => {
 	messages.value = messages.value.filter((m) => m.message_id != message.message_id)
 })
 
+socket.on('join_conv', (conv) => {
+	console.log('conv joined: ' + conv.conversation_id)
+
+	conversations.value.push(conv)
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()
 		.then((response) => {
+			socket.emit('user_join', userStore.user.user_id)
+
 			userService
 				.getUserConversations(userStore.user.user_id)
 				.then((response) => {

@@ -18,7 +18,7 @@ app.use(
 	cors({
 		origin: "http://localhost:5173",
 		credentials: true,
-	})
+	}),
 );
 
 app.use((req, res, next) => {
@@ -80,6 +80,14 @@ io.on("connection", (socket) => {
 
 	socket.on("leave_conversation", (conversationId) => {
 		socket.leave(`conversation_${conversationId}`);
+	});
+
+	socket.on("user_join", (userId) => {
+		socket.join(`user_${userId}`); //pour envoyer une update un a seul user
+	});
+
+	socket.on("user_leave", (userId) => {
+		socket.leave(`user_${userId}`);
 	});
 });
 
