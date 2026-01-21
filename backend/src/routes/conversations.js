@@ -152,9 +152,14 @@ conversationRouter.put("/:id/messages/:message_id", auth, messageMiddleware, (re
 
 conversationRouter.delete("/:id/messages/:message_id", auth, messageMiddleware, (req, res) => {
 	Message.destroy({ where: { message_id: req.params.message_id } })
-		.then((deletedMessage) => {
+		.then((_) => {
 			const message = `le message ${req.params.id} a bien été supprimé.`;
-			res.json(success(message, deletedMessage));
+
+			req.io.to(`conversation_${req.params.id}`).emit("delete_message", {
+				message_id: req.params.message_id,
+				conversation_id: req.params.id,
+			});
+			res.json(success(message, req.params.message_id));
 		})
 		.catch((error) => {
 			const message = `Le message n'a n'a pas pu être supprimé. Merci de réessayer dans quelques instants.`;

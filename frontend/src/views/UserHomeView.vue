@@ -43,6 +43,14 @@ socket.on('edit_message', (message) => {
 	messages.value[messageToEditIndex].text = message.text
 })
 
+socket.on('delete_message', (message) => {
+	if (message.conversation_id != shownConvId.value) return
+
+	console.log('message deleted: ' + message.message_id)
+
+	messages.value = messages.value.filter((m) => m.message_id != message.message_id)
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()
@@ -182,7 +190,7 @@ async function deleteMessage(messageId) {
 	conversationService
 		.deletedMessage(messageId, shownConvId.value)
 		.then((response) => {
-			console.log(response.data)
+			// console.log(response.data)
 		})
 		.catch((error) => {
 			console.log(error)
