@@ -334,6 +334,12 @@ function scrollToBottom() {
 
 	mc.scrollTop = mc.scrollHeight
 }
+
+function shouldShowUsername(index) {
+	if (index == 0) return true
+	//si le message precedant a été envoyé par un user différent, on affiche le username, sinon non
+	return messages.value[index].user_id != messages.value[index - 1].user_id
+}
 </script>
 <template>
 	<div class="home">
@@ -412,11 +418,13 @@ function scrollToBottom() {
 		<div class="current-conv">
 			<div class="messages" @scroll="onScroll" ref="messagesContainer">
 				<div
-					v-for="message in messages"
+					v-for="(message, index) in messages"
 					class="message"
 					:class="{ 'self-message': message.user_id == userStore.user.user_id }"
 				>
-					<div class="message-sender">{{ message.User.name }}</div>
+					<div class="message-sender" v-if="shouldShowUsername(index)">
+						{{ message.User.name }}
+					</div>
 					<div
 						class="message-text"
 						v-if="!editInputShown || editInputShown != message.message_id"
@@ -595,6 +603,7 @@ function scrollToBottom() {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
+	margin-top: 4px;
 }
 
 .message-sender {
