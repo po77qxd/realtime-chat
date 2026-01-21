@@ -34,6 +34,15 @@ socket.on('new_message', (message) => {
 	messages.value.push(message)
 })
 
+socket.on('edit_message', (message) => {
+	if (message.conversation_id != shownConvId.value) return
+
+	console.log('message edited: ' + message.text)
+
+	const messageToEditIndex = messages.value.findIndex((m) => m.message_id == message.message_id)
+	messages.value[messageToEditIndex].text = message.text
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()

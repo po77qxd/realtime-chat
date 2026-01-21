@@ -56,7 +56,7 @@ conversationRouter.put("/:id", auth, convMiddleware, (req, res) => {
 			name: req.body.name,
 			admin_user_id: req.user_id,
 		},
-		{ where: { conversation_id: req.params.id } }
+		{ where: { conversation_id: req.params.id } },
 	)
 		.then((updatedConv) => {
 			const message = `la conversation ${req.params.id} a bien été modifiée.`;
@@ -135,8 +135,14 @@ conversationRouter.post("/:id/messages", auth, (req, res) => {
 conversationRouter.put("/:id/messages/:message_id", auth, messageMiddleware, (req, res) => {
 	Message.update({ text: req.body.text }, { where: { message_id: req.params.message_id } })
 		.then((updatedMessage) => {
-			const message = `le message ${req.params.id} a bien été modifié.`;
-			res.json(success(message, updatedMessage));
+			const message = `le message ${req.params.message_id} a bien été modifié.`;
+
+			Message.findByPk(req.params.message_id).then((new_message) => {
+				req.io.to(`conversation_${req.params.id}`).emit("edit_message", {
+					...new_message.get({ plain: true }),
+				});
+				res.json(success(message, new_message));
+			});
 		})
 		.catch((error) => {
 			const message = `Le message n'a n'a pas pu être modifié. Merci de réessayer dans quelques instants.`;
