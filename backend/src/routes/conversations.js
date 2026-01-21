@@ -78,6 +78,9 @@ conversationRouter.delete("/:id", auth, convMiddleware, (req, res) => {
 	Conversation.destroy({ where: { conversation_id: req.params.id } })
 		.then((deletedConv) => {
 			const message = `la conversation ${req.params.id} a bien été supprimée.`;
+
+			req.io.to(`users_conv_${req.params.id}`).emit("delete_conv", req.params.id);
+
 			res.json(success(message, deletedConv));
 		})
 		.catch((error) => {

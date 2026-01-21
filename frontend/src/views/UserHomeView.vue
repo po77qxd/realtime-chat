@@ -66,6 +66,14 @@ socket.on('edit_conv', (conv) => {
 	conversations.value[convToEditIndex].name = conv.name
 })
 
+socket.on('delete_conv', (conv_id) => {
+	console.log('conv deleted: ' + conv_id)
+
+	conversations.value = conversations.value.filter((c) => c.conversation_id != conv_id)
+
+	change_conv(conversations.value[0].conversation_id)
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()
