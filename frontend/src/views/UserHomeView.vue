@@ -379,14 +379,14 @@ async function deleteConv(convId) {
 				</div>
 			</div>
 
-			<div class="createConv" v-if="showCreateConv">
+			<form class="createConv" v-if="showCreateConv" @submit.prevent="createConv">
 				<h3>Créer un conversation</h3>
 				<input type="text" placeholder="Nom de la conversation" v-model="convName" />
 				<div class="createConvButtons">
-					<button @click="closeCreateConvForm">Annuler</button>
-					<button @click="createConv">Créer</button>
+					<button @click="closeCreateConvForm" type="button">Annuler</button>
+					<button type="submit">Créer</button>
 				</div>
-			</div>
+			</form>
 
 			<div class="buttons">
 				<button @click="showCreateConvForm">Créer une conversation</button>
