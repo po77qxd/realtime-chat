@@ -175,4 +175,33 @@ conversationRouter.delete("/:id/messages/:message_id", auth, messageMiddleware, 
 			res.status(500).json({ message, data: error });
 		});
 });
+
+// USERS //
+conversationRouter.get("/:id/users", auth, (req, res) => {
+	Conversation.findByPk(req.params.id, {
+		include: [
+			{
+				model: User,
+				attributes: ["user_id", "name"],
+				through: {
+					attributes: [],
+				},
+			},
+		],
+	})
+		.then((conv) => {
+			if (conv === null) {
+				const message = `La conversation demandé n'existe pas. Merci de réessayer avec un autre identifiant.`;
+				return res.status(404).json({ message });
+			}
+			const message = `Les utilisateur de la conversation dont l'id vaut ${conv.conversation_id} ont bien été récupérés !`;
+			res.json(success(message, conv.Users));
+		})
+		.catch((error) => {
+			console.error(error);
+			const message = `Les utilisateur de la conversation n'a pas pu être récupéré. Veuillez reéssayer dans quelques instants.`;
+			res.status(500).json({ message, data: error });
+		});
+});
+
 export { conversationRouter };
