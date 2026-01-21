@@ -71,7 +71,7 @@ socket.on('delete_conv', (conv_id) => {
 
 	conversations.value = conversations.value.filter((c) => c.conversation_id != conv_id)
 
-	change_conv(conversations.value[0].conversation_id)
+	if (shownConvId.value == conv_id) change_conv(conversations.value[0].conversation_id)
 })
 
 onMounted(() => {
