@@ -60,7 +60,13 @@ conversationRouter.put("/:id", auth, convMiddleware, (req, res) => {
 	)
 		.then((updatedConv) => {
 			const message = `la conversation ${req.params.id} a bien été modifiée.`;
-			res.json(success(message, updatedConv));
+
+			Conversation.findByPk(req.params.id).then((conv) => {
+				req.io.to(`users_conv_${req.params.id}`).emit("edit_conv", {
+					...conv.get({ plain: true }),
+				});
+				res.json(success(message, conv));
+			});
 		})
 		.catch((error) => {
 			const message = `La conversation n'a n'a pas pu être modifiée. Merci de réessayer dans quelques instants.`;

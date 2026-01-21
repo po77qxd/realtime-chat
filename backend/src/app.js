@@ -89,6 +89,15 @@ io.on("connection", (socket) => {
 	socket.on("user_leave", (userId) => {
 		socket.leave(`user_${userId}`);
 	});
+
+	socket.on("join_users_conv", (convId) => {
+		//pour envoyer une update aux user qui ont cette conv dans leur liste
+		socket.join(`users_conv_${convId}`);
+	});
+
+	socket.on("leave_users_conv", (convId) => {
+		socket.leave(`users_conv_${convId}`);
+	});
 });
 
 httpServer.listen(3001);

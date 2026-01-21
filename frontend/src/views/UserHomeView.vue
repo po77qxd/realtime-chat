@@ -57,6 +57,15 @@ socket.on('join_conv', (conv) => {
 	conversations.value.push(conv)
 })
 
+socket.on('edit_conv', (conv) => {
+	console.log('conv edited: ' + conv.name)
+
+	const convToEditIndex = conversations.value.findIndex(
+		(c) => c.conversation_id == conv.conversation_id,
+	)
+	conversations.value[convToEditIndex].name = conv.name
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()
@@ -69,6 +78,10 @@ onMounted(() => {
 					conversations.value = response.data.data
 					change_conv(conversations.value[0].conversation_id)
 					shownConvAdminId.value = conversations.value[0].admin_user_id
+
+					conversations.value.forEach((conv) => {
+						socket.emit('join_users_conv', conv.conversation_id)
+					})
 
 					conversationService
 						.getMessagesByConvId(conversations.value[0].conversation_id) //par défaut on affiche les messages de la premiere conv
@@ -135,6 +148,7 @@ async function createConv() {
 				.addUserToConv(response.data.data.conversation_id)
 				.then((response) => {
 					change_conv(response.data.data.conversation_id)
+					socket.emit('join_users_conv', response.data.data.conversation_id)
 				})
 				.catch((error) => {
 					console.log(error)
@@ -243,6 +257,7 @@ async function joinConv(convId) {
 		.addUserToConv(convId)
 		.then((response) => {
 			joinConvShown.value = false
+			socket.emit('join_users_conv', convId)
 		})
 		.catch((error) => {
 			console.log(error)
@@ -290,6 +305,7 @@ async function deleteConv(convId) {
 		.deleteConv(convId)
 		.then((response) => {
 			// console.log(response.data.data)
+			socket.emit('leave_users_conv', convId)
 		})
 		.catch((error) => {
 			console.log(error)
