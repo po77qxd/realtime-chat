@@ -30,14 +30,11 @@ const convToEdit = ref(null)
 socket.on('new_message', (message) => {
 	if (message.conversation_id != shownConvId.value) return
 
-	console.log('message received: ' + message.text)
 	messages.value.push(message)
 })
 
 socket.on('edit_message', (message) => {
 	if (message.conversation_id != shownConvId.value) return
-
-	console.log('message edited: ' + message.text)
 
 	const messageToEditIndex = messages.value.findIndex((m) => m.message_id == message.message_id)
 	messages.value[messageToEditIndex].text = message.text
@@ -46,20 +43,14 @@ socket.on('edit_message', (message) => {
 socket.on('delete_message', (message) => {
 	if (message.conversation_id != shownConvId.value) return
 
-	console.log('message deleted: ' + message.message_id)
-
 	messages.value = messages.value.filter((m) => m.message_id != message.message_id)
 })
 
 socket.on('join_conv', (conv) => {
-	console.log('conv joined: ' + conv.conversation_id)
-
 	conversations.value.push(conv)
 })
 
 socket.on('edit_conv', (conv) => {
-	console.log('conv edited: ' + conv.name)
-
 	const convToEditIndex = conversations.value.findIndex(
 		(c) => c.conversation_id == conv.conversation_id,
 	)
@@ -67,8 +58,6 @@ socket.on('edit_conv', (conv) => {
 })
 
 socket.on('delete_conv', (conv_id) => {
-	console.log('conv deleted: ' + conv_id)
-
 	conversations.value = conversations.value.filter((c) => c.conversation_id != conv_id)
 
 	if (shownConvId.value == conv_id) change_conv(conversations.value[0].conversation_id)
@@ -277,7 +266,7 @@ async function searchConv() {
 	userService
 		.getUserConversations(userStore.user.user_id, searchConvValue.value)
 		.then((response) => {
-			console.log(response.data.data)
+			// console.log(response.data.data)
 			conversations.value = response.data.data
 		})
 		.catch((error) => {
@@ -296,7 +285,7 @@ async function editConv(convId) {
 	conversationService
 		.editConv(convId, convToEdit.value)
 		.then((response) => {
-			console.log(response.data.data)
+			// console.log(response.data.data)
 			closeEditConv()
 		})
 		.catch((error) => {
