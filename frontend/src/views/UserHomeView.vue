@@ -511,7 +511,9 @@ function handleUserListState() {
 			:class="{ userListShownClass: userListShown, userListHiddenClass: !userListShown }"
 		>
 			<button @click="handleUserListState">
-				{{ userListShown ? 'close userlist' : 'userlist' }}
+				<!-- {{ userListShown ? 'close userlist' : 'userlist' }} -->
+				<img src="../assets/close.png" v-if="userListShown" />
+				<img src="../assets/user_list.png" v-else />
 			</button>
 			<div class="userListTitle" v-if="userListShown">Utilisateurs</div>
 			<div v-for="user in userList" v-if="userListShown">
@@ -757,17 +759,25 @@ function handleUserListState() {
 	margin-bottom: 5px;
 }
 
+.userList button img {
+	width: 25px;
+}
+
 .userListTitle {
 	font-weight: bold;
 }
 
 .userListHiddenClass {
-	margin-left: -55px;
+	margin-left: -35px;
 }
 .userListShownClass {
 	width: 6%;
 	margin-left: 15px;
 	border-left: 1px solid gray;
 	padding-left: 5px;
+}
+
+.userListShownClass button {
+	margin-bottom: 10px;
 }
 </style>
