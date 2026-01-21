@@ -14,6 +14,7 @@ async function getCurrentUser() {
 }
 
 async function getUserConversations(id, name = '') {
+	if (name == null) name = ''
 	return apiClient.get(`/${id}/conversations?name=${name}`)
 }
 

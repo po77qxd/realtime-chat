@@ -221,6 +221,7 @@ async function deleteMessage(messageId) {
 
 function showJoinConv() {
 	if (joinConvShown.value) {
+		//montrer la page mes conversations
 		searchConv()
 		joinConvShown.value = false
 		return
