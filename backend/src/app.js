@@ -100,4 +100,11 @@ io.on("connection", (socket) => {
 	});
 });
 
+import { redisClient } from "./db/redis.js";
+
+redisClient.set(`test`, "hello");
+
+const testRedis = await redisClient.get(`test`);
+console.log(testRedis);
+
 httpServer.listen(3001);
