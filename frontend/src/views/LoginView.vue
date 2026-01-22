@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import AuthService from '@/services/authService'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
@@ -7,6 +7,15 @@ import { useUserStore } from '@/stores/user'
 const router = useRouter()
 const userStore = useUserStore()
 const user = ref({ email: '', password: '' })
+
+onMounted(() => {
+	userStore.getCurrentUser().then((_) => {
+		if (userStore.user) {
+			console.log(userStore.user)
+			router.push('/home')
+		}
+	})
+})
 
 async function handleSubmit() {
 	try {

@@ -1,4 +1,20 @@
-<script setup></script>
+<script setup>
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+onMounted(() => {
+	userStore.getCurrentUser().then((_) => {
+		if (userStore.user) {
+			console.log(userStore.user)
+			router.push('/home')
+		}
+	})
+})
+</script>
 
 <template>
 	<div class="home">
