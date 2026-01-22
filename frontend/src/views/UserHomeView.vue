@@ -76,7 +76,6 @@ socket.on('delete_conv', (conv_id) => {
 })
 
 socket.on('user_join_conv', (user) => {
-	console.log(user.user_id)
 	userList.value.push(user)
 })
 

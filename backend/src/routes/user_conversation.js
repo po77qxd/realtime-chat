@@ -21,7 +21,7 @@ userConversationRouter.post("/", auth, (req, res) => {
 				User.findByPk(req.user_id, {
 					attributes: { exclude: ["password", "email"] },
 				}).then((user) => {
-					req.io.to(`conversation_${req.body.conv_id}}`).emit("user_join_conv", {
+					req.io.to(`conversation_${req.body.conv_id}`).emit("user_join_conv", {
 						...user.get({ plain: true }),
 					});
 				});
