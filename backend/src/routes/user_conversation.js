@@ -30,7 +30,7 @@ userConversationRouter.post("/", auth, (req, res) => {
 			});
 		})
 		.catch((error) => {
-			const message = `Lûtilisateur n'a pas pu être ajouté a la conversation. Merci de réessayer dans quelques instants.`;
+			const message = `L'utilisateur n'a pas pu être ajouté a la conversation. Merci de réessayer dans quelques instants.`;
 			res.status(500).json({ message, data: error });
 		});
 });
