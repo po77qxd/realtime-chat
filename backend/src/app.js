@@ -72,7 +72,7 @@ const io = new Server(httpServer, {
 	},
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
 	socket.on("join_conversation", (conversationId) => {
 		socket.join(`conversation_${conversationId}`);
 		console.log(`Socket ${socket.id} a rejoint conversation_${conversationId}`);
@@ -82,8 +82,9 @@ io.on("connection", (socket) => {
 		socket.leave(`conversation_${conversationId}`);
 	});
 
-	socket.on("user_join", (userId) => {
+	socket.on("user_join", async (userId) => {
 		socket.join(`user_${userId}`); //pour envoyer une update un a seul user
+		await redisClient.set(`user:sockets:${userId}`, socket.id);
 	});
 
 	socket.on("user_leave", (userId) => {
@@ -97,6 +98,10 @@ io.on("connection", (socket) => {
 
 	socket.on("leave_users_conv", (convId) => {
 		socket.leave(`users_conv_${convId}`);
+	});
+
+	socket.on("user_disconnect", async (userId) => {
+		await redisClient.remove(`user:sockets:${userId}`);
 	});
 });
 

@@ -79,6 +79,10 @@ socket.on('user_join_conv', (user) => {
 	userList.value.push(user)
 })
 
+socket.on('disconnect', () => {
+	socket.emit('user_disconnect', userStore.user.user_id)
+})
+
 onMounted(() => {
 	userStore
 		.getCurrentUser()
