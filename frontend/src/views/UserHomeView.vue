@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
 import messageService from '@/services/messageService'
@@ -34,6 +34,8 @@ const userListShown = ref(false)
 const messagesContainer = ref(null)
 const isUserAtBottom = ref(true)
 const SCROLL_THRESHOLD = 50 //px
+
+const sendMessageTextarea = ref(null)
 
 //sockets:
 socket.on('new_message', async (message) => {
@@ -376,6 +378,25 @@ function handleUserListState() {
 function parseMarkdown(text) {
 	return DOMPurify.sanitize(marked.parse(text))
 }
+
+watch(messageToSend, async () => {
+	await nextTick()
+
+	const textarea = sendMessageTextarea.value
+	if (!textarea) return
+
+	// reset la hauteur
+	textarea.style.height = 'auto'
+
+	const style = window.getComputedStyle(textarea)
+	const lineHeight = parseFloat(style.lineHeight)
+	const padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+
+	const maxLines = 5
+	const maxHeight = lineHeight * maxLines + padding
+
+	textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px'
+})
 </script>
 <template>
 	<div class="home">
@@ -508,7 +529,13 @@ function parseMarkdown(text) {
 			</button>
 			<div class="message-bar">
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
-					<textarea placeholder="Envoyer un message" v-model="messageToSend"></textarea>
+					<textarea
+						placeholder="Envoyer un message"
+						v-model="messageToSend"
+						@keypress.enter.exact="sendMessage"
+						rows="1"
+						ref="sendMessageTextarea"
+					></textarea>
 					<button type="submit" class="sendButton">
 						<img src="../assets/send.png" />
 					</button>
@@ -714,14 +741,21 @@ function parseMarkdown(text) {
 
 .message-bar {
 	width: 100%;
-	margin-left: 10px;
 	margin-top: 15px;
 }
 
 .message-bar textarea {
+	height: 50px;
 	flex: 1;
-	padding: 10px;
+	padding: 15px;
+	padding-right: 35px;
 	width: 90%;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	text-align: left;
+	line-height: 20px;
+	resize: none;
+	box-sizing: border-box;
 }
 
 .message-bar button {
