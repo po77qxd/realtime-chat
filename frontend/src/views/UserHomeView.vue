@@ -36,6 +36,7 @@ const isUserAtBottom = ref(true)
 const SCROLL_THRESHOLD = 50 //px
 
 const sendMessageTextarea = ref(null)
+const editMessageTextarea = ref(null)
 
 //sockets:
 socket.on('new_message', async (message) => {
@@ -397,6 +398,27 @@ watch(messageToSend, async () => {
 
 	textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px'
 })
+
+watch(messagetoEdit, async () => {
+	await nextTick()
+
+	const textarea = editMessageTextarea.value[0]
+	if (!textarea) return
+
+	//reset la hauteur
+	textarea.style.height = 'auto'
+
+	const style = window.getComputedStyle(textarea)
+	const lineHeight = parseFloat(style.lineHeight)
+	const padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+
+	const maxLines = 5
+	const maxHeight = lineHeight * maxLines + padding
+
+	textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px'
+	textarea.style.height = textarea.scrollHeight + 'px'
+	textarea.style.width = '50%'
+})
 </script>
 <template>
 	<div class="home">
@@ -493,11 +515,11 @@ watch(messageToSend, async () => {
 						v-else
 						@submit.prevent="editMessage(message.message_id)"
 					>
-						<input
-							type="text"
+						<textarea
 							placeholder="Modifier le message"
 							v-model="messagetoEdit"
-						/>
+							ref="editMessageTextarea"
+						></textarea>
 						<button @click="closeEditMessage" type="button">
 							<img src="../assets/close.png" />
 						</button>
@@ -714,9 +736,11 @@ watch(messageToSend, async () => {
 	width: 100%;
 }
 
-.edit-message input {
+.edit-message textarea {
 	padding: 10px;
 	margin: 5px;
+	line-height: 20px;
+	resize: none;
 }
 
 .edit-message button {
