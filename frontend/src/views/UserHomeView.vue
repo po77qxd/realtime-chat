@@ -690,7 +690,7 @@ watch(messageToSend, async () => {
 
 .message-text {
 	background: blue;
-	padding: 8px 12px;
+	padding: 0px 10px;
 	width: fit-content;
 	max-width: 50%;
 
@@ -699,6 +699,10 @@ watch(messageToSend, async () => {
 	overflow-wrap: anywhere;
 	text-align: left;
 	white-space: normal;
+}
+
+.message-text :link {
+	color: #00ffff;
 }
 
 .message-menu button {
