@@ -3,6 +3,7 @@ import { sequelize, initDb } from "./db/sequelize.js";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { upload } from "./middlewares/multer.js";
 
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -47,6 +48,11 @@ app.use("/api/register", registerRouter);
 
 import { userConversationRouter } from "./routes/user_conversation.js";
 app.use("/api/user_conversation", userConversationRouter);
+
+import { uploadRouter } from "./routes/upload.js";
+app.use("/api/image", uploadRouter);
+
+app.use("/uploads", express.static("uploads"));
 
 app.use(({ res }) => {
 	const message =

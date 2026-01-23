@@ -8,6 +8,8 @@ import { useUserStore } from '@/stores/user'
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 
+import axios from 'axios'
+
 import { socket } from '@/main'
 
 const userStore = useUserStore()
@@ -419,6 +421,18 @@ watch(messagetoEdit, async () => {
 	textarea.style.height = textarea.scrollHeight + 'px'
 	textarea.style.width = '50%'
 })
+
+async function uploadImage(e) {
+	const file = e.target.files[0]
+	if (!file) return
+
+	const formData = new FormData()
+	formData.append('image', file)
+
+	const res = await axios.post('/api/image', formData)
+
+	messageToSend.value += `\n![image](${res.data.url})`
+}
 </script>
 <template>
 	<div class="home">
@@ -558,6 +572,7 @@ watch(messagetoEdit, async () => {
 						rows="1"
 						ref="sendMessageTextarea"
 					></textarea>
+					<input type="file" accept="image/*" @change="uploadImage" />
 					<button type="submit" class="sendButton">
 						<img src="../assets/send.png" />
 					</button>
