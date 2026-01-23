@@ -5,6 +5,8 @@ import userService from '@/services/userService'
 import messageService from '@/services/messageService'
 import userConversationService from '@/services/userConversationService'
 import { useUserStore } from '@/stores/user'
+import DOMPurify from 'dompurify'
+import { marked } from 'marked'
 
 import { socket } from '@/main'
 
@@ -370,6 +372,10 @@ function shouldShowUsername(index) {
 function handleUserListState() {
 	userListShown.value = !userListShown.value
 }
+
+function parseMarkdown(text) {
+	return DOMPurify.sanitize(marked.parse(text))
+}
 </script>
 <template>
 	<div class="home">
@@ -459,9 +465,8 @@ function handleUserListState() {
 						class="message-text"
 						v-if="!editInputShown || editInputShown != message.message_id"
 						@click="showMessageMenu(message.message_id)"
-					>
-						{{ message.text }}
-					</div>
+						v-html="parseMarkdown(message.text)"
+					></div>
 					<form
 						class="edit-message"
 						v-else
@@ -503,7 +508,7 @@ function handleUserListState() {
 			</button>
 			<div class="message-bar">
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
-					<input type="text" placeholder="Envoyer un message" v-model="messageToSend" />
+					<textarea placeholder="Envoyer un message" v-model="messageToSend"></textarea>
 					<button type="submit" class="sendButton">
 						<img src="../assets/send.png" />
 					</button>
@@ -713,7 +718,7 @@ function handleUserListState() {
 	margin-top: 15px;
 }
 
-.message-bar input {
+.message-bar textarea {
 	flex: 1;
 	padding: 10px;
 	width: 90%;
@@ -773,6 +778,7 @@ function handleUserListState() {
 
 .userListHiddenClass {
 	margin-left: -35px;
+	height: fit-content;
 }
 .userListShownClass {
 	width: 6%;
