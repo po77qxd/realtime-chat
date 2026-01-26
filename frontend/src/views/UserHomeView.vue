@@ -434,6 +434,18 @@ async function uploadImage(e) {
 
 	messageToSend.value += `\n![image](${res.data.url})`
 }
+
+async function handleImageDrop(e) {
+	const file = e.dataTransfer.files[0]
+	if (!file || !file.type.startsWith('image/')) return
+
+	const formData = new FormData()
+	formData.append('image', file)
+
+	const res = await uploadService.uploadImage(formData)
+
+	messageToSend.value += `\n![image](${res.data.url})`
+}
 </script>
 <template>
 	<div class="home">
@@ -572,6 +584,8 @@ async function uploadImage(e) {
 						@keypress.enter.exact="sendMessage"
 						rows="1"
 						ref="sendMessageTextarea"
+						@dragover.prevent=""
+						@drop.prevent="handleImageDrop"
 					></textarea>
 					<input
 						type="file"
