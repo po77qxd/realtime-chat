@@ -5,9 +5,10 @@ const storage = multer.diskStorage({
 	destination: (req, file, cb) => {
 		cb(null, "./src/uploads/");
 	},
-	// Nom du fichier: timestamp + extension originale
+	// Nom du fichier: timestamp + random + extension originale
 	filename: (req, file, cb) => {
-		cb(null, Date.now() + path.extname(file.originalname));
+		const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+		cb(null, uniqueName + path.extname(file.originalname));
 	},
 });
 
@@ -19,6 +20,7 @@ const upload = multer({
 		const fileTypes = /jpeg|jpg|png|gif|webp/;
 		const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
 		const mimeType = fileTypes.test(file.mimetype);
+
 		if (extname && mimeType) {
 			return cb(null, true);
 		}

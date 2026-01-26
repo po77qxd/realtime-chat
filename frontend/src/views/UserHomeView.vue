@@ -4,6 +4,7 @@ import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
 import messageService from '@/services/messageService'
 import userConversationService from '@/services/userConversationService'
+import uploadService from '@/services/uploadService'
 import { useUserStore } from '@/stores/user'
 import DOMPurify from 'dompurify'
 import { marked } from 'marked'
@@ -429,7 +430,7 @@ async function uploadImage(e) {
 	const formData = new FormData()
 	formData.append('image', file)
 
-	const res = await axios.post('/api/image', formData)
+	const res = await uploadService.uploadImage(formData)
 
 	messageToSend.value += `\n![image](${res.data.url})`
 }
