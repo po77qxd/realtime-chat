@@ -599,6 +599,7 @@ async function handleImageDrop(e) {
 						ref="sendMessageTextarea"
 						@dragover.prevent=""
 						@drop.prevent="handleImageDrop"
+						maxlength="4096"
 					></textarea>
 					<input
 						type="file"
