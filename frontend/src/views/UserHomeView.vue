@@ -767,6 +767,11 @@ async function handleImageDrop(e) {
 	color: #00ffff;
 }
 
+/* deep pour que le css s'applique*/
+:deep(.message-text img) {
+	max-width: 100%;
+}
+
 .message-menu button {
 	width: 40px;
 	margin: 5px;
