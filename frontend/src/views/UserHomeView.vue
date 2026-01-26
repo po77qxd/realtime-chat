@@ -573,9 +573,19 @@ async function uploadImage(e) {
 						rows="1"
 						ref="sendMessageTextarea"
 					></textarea>
-					<input type="file" accept="image/*" @change="uploadImage" />
+					<input
+						type="file"
+						ref="fileInput"
+						accept="image/*"
+						hidden
+						@change="uploadImage"
+					/>
+
 					<button type="submit" class="sendButton">
 						<img src="../assets/send.png" />
+					</button>
+					<button @click="$refs.fileInput.click()" class="uploadImageButton">
+						<img src="../assets/image.png" />
 					</button>
 				</form>
 			</div>
@@ -802,13 +812,21 @@ async function uploadImage(e) {
 	box-sizing: border-box;
 }
 
-.message-bar button {
+.message-bar .sendButton {
 	cursor: pointer;
 	width: 40px;
 	margin: 5px;
 	border: none;
 	margin-left: -40px;
 	background-color: white;
+}
+
+.message-bar .uploadImageButton {
+	width: 40px;
+}
+
+.message-bar .uploadImageButton img {
+	width: 100%;
 }
 
 .sendButton img {
