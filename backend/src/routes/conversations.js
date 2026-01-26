@@ -77,7 +77,8 @@ conversationRouter.put("/:id", auth, convMiddleware, (req, res) => {
 
 conversationRouter.delete("/:id", auth, convMiddleware, (req, res) => {
 	Conversation.destroy({ where: { conversation_id: req.params.id } })
-		.then((deletedConv) => {
+		.then(async (deletedConv) => {
+			await redisClient.del(`conversations:${req.params.id}:messages`); //supprimer le cache quand la conversation est supprimée
 			const message = `la conversation ${req.params.id} a bien été supprimée.`;
 
 			req.io.to(`users_conv_${req.params.id}`).emit("delete_conv", req.params.id);
@@ -91,7 +92,14 @@ conversationRouter.delete("/:id", auth, convMiddleware, (req, res) => {
 });
 
 // MESSAGES //
-conversationRouter.get("/:id/messages", auth, (req, res) => {
+conversationRouter.get("/:id/messages", auth, async (req, res) => {
+	const cacheKey = `conversations:${req.params.id}:messages`;
+
+	const cached = await redisClient.get(cacheKey);
+	if (cached) {
+		const message = `[CACHE] Les messages de la conversation ${req.params.id} ont bien été récupérés`;
+		return res.json(success(message, JSON.parse(cached)));
+	}
 	Message.findAll({
 		where: { conversation_id: req.params.id },
 		order: ["timestamp_"],
@@ -102,7 +110,8 @@ conversationRouter.get("/:id/messages", auth, (req, res) => {
 			},
 		],
 	})
-		.then((messages) => {
+		.then(async (messages) => {
+			await redisClient.set(cacheKey, JSON.stringify(messages));
 			const message = `Il y a ${messages.length} messages qui correspondent au terme de la recherche`;
 			res.json(success(message, messages));
 		})
@@ -124,11 +133,12 @@ conversationRouter.post("/:id/messages", auth, (req, res) => {
 			User.findByPk(createdMessage.user_id, {
 				attributes: { exclude: ["password", "email", "user_id"] }, // évite d'envoyer le mot de passe
 			})
-				.then((user) => {
+				.then(async (user) => {
 					req.io.to(`conversation_${req.params.id}`).emit("new_message", {
 						...createdMessage.get({ plain: true }),
 						User: user,
 					});
+					await redisClient.del(`conversations:${req.params.id}:messages`); //invalider la cache car nouveau message
 					res.json(success(message, createdMessage));
 				})
 				.catch((error) => {
@@ -147,10 +157,11 @@ conversationRouter.put("/:id/messages/:message_id", auth, messageMiddleware, (re
 		.then((updatedMessage) => {
 			const message = `le message ${req.params.message_id} a bien été modifié.`;
 
-			Message.findByPk(req.params.message_id).then((new_message) => {
+			Message.findByPk(req.params.message_id).then(async (new_message) => {
 				req.io.to(`conversation_${req.params.id}`).emit("edit_message", {
 					...new_message.get({ plain: true }),
 				});
+				await redisClient.del(`conversations:${req.params.id}:messages`);
 				res.json(success(message, new_message));
 			});
 		})
@@ -162,13 +173,14 @@ conversationRouter.put("/:id/messages/:message_id", auth, messageMiddleware, (re
 
 conversationRouter.delete("/:id/messages/:message_id", auth, messageMiddleware, (req, res) => {
 	Message.destroy({ where: { message_id: req.params.message_id } })
-		.then((_) => {
+		.then(async (_) => {
 			const message = `le message ${req.params.id} a bien été supprimé.`;
 
 			req.io.to(`conversation_${req.params.id}`).emit("delete_message", {
 				message_id: req.params.message_id,
 				conversation_id: req.params.id,
 			});
+			await redisClient.del(`conversations:${req.params.id}:messages`);
 			res.json(success(message, req.params.message_id));
 		})
 		.catch((error) => {
