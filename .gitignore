@@ -1,2 +1,4 @@
 node_modules/
 .env
+backend/src/uploads/*
+!backend/src/uploads/readme.md
