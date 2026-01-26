@@ -52,7 +52,7 @@ app.use("/api/user_conversation", userConversationRouter);
 import { uploadRouter } from "./routes/upload.js";
 app.use("/api/image", uploadRouter);
 
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("./src/uploads"));
 
 app.use(({ res }) => {
 	const message =
