@@ -4,6 +4,7 @@ import { Conversation, Message, User } from "../db/sequelize.js";
 import auth from "../auth/auth.js";
 import messageMiddleware from "../middlewares/messageMiddleware.js ";
 import convMiddleware from "../middlewares/convMiddleware.js";
+import { redisClient } from "../db/redis.js";
 
 const conversationRouter = express();
 
@@ -177,7 +178,7 @@ conversationRouter.delete("/:id/messages/:message_id", auth, messageMiddleware, 
 });
 
 // USERS //
-conversationRouter.get("/:id/users", auth, (req, res) => {
+conversationRouter.get("/:id/users", auth, async (req, res) => {
 	Conversation.findByPk(req.params.id, {
 		include: [
 			{
@@ -189,11 +190,21 @@ conversationRouter.get("/:id/users", auth, (req, res) => {
 			},
 		],
 	})
-		.then((conv) => {
+		.then(async (conv) => {
 			if (conv === null) {
 				const message = `La conversation demandé n'existe pas. Merci de réessayer avec un autre identifiant.`;
 				return res.status(404).json({ message });
 			}
+
+			conv.Users = await Promise.all(
+				conv.Users.map(async (user) => {
+					const isOnline = await redisClient.exists(`user:sockets:${user.user_id}`);
+					return {
+						...user.get({ plain: true }),
+						isOnline: isOnline == 1, // 1 si l'user est en ligne, sinon 0
+					};
+				}),
+			);
 			const message = `Les utilisateur de la conversation dont l'id vaut ${conv.conversation_id} ont bien été récupérés !`;
 			res.json(success(message, conv.Users));
 		})

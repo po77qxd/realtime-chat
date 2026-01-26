@@ -79,9 +79,18 @@ socket.on('user_join_conv', (user) => {
 	userList.value.push(user)
 })
 
-socket.on('disconnect', () => {
-	socket.emit('user_disconnect', userStore.user.user_id)
+socket.on('user_online', (userId) => {
+	if (!userListShown) return
+	const userOnlineIndex = userList.value.findIndex((user) => user.user_id == userId)
+	userList.value[userOnlineIndex].isOnline = true
 })
+socket.on('user_offline', (userId) => {
+	if (!userListShown) return
+	const userOfflineIndex = userList.value.findIndex((user) => user.user_id == userId)
+	userList.value[userOfflineIndex].isOnline = false
+})
+
+setInterval(() => socket.emit('heartbeat'), 15000) //15sec
 
 onMounted(() => {
 	userStore
@@ -524,8 +533,13 @@ function handleUserListState() {
 				<img src="../assets/user_list.png" v-else />
 			</button>
 			<div class="userListTitle" v-if="userListShown">Utilisateurs</div>
+			<div class="onlineTitle" v-if="userListShown">En ligne</div>
 			<div v-for="user in userList" v-if="userListShown">
-				{{ user.name }}
+				<div v-if="user.isOnline">{{ user.name }}</div>
+			</div>
+			<div class="offlineTitle" v-if="userListShown">Hors ligne</div>
+			<div v-for="user in userList" v-if="userListShown">
+				<div v-if="!user.isOnline">{{ user.name }}</div>
 			</div>
 		</div>
 	</div>
@@ -773,6 +787,13 @@ function handleUserListState() {
 
 .userListTitle {
 	font-weight: bold;
+	font-size: large;
+}
+
+.onlineTitle,
+.offlineTitle {
+	font-weight: bold;
+	margin-top: 15px;
 }
 
 .userListHiddenClass {
