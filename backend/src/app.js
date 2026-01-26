@@ -9,6 +9,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 
 import { Message } from "./db/sequelize.js";
+import { redisClient } from "./db/redis.js";
 
 const app = express();
 const port = 3000;
@@ -78,7 +79,7 @@ const io = new Server(httpServer, {
 	},
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
 	socket.on("join_conversation", (conversationId) => {
 		socket.join(`conversation_${conversationId}`);
 		console.log(`Socket ${socket.id} a rejoint conversation_${conversationId}`);
@@ -88,8 +89,16 @@ io.on("connection", (socket) => {
 		socket.leave(`conversation_${conversationId}`);
 	});
 
-	socket.on("user_join", (userId) => {
+	socket.on("user_join", async (userId) => {
 		socket.join(`user_${userId}`); //pour envoyer une update un a seul user
+		socket.userId = userId;
+		await redisClient.set(`user:sockets:${userId}`, socket.id);
+		await redisClient.expire(`user:sockets:${userId}`, 30);
+		io.emit("user_online", userId);
+	});
+
+	socket.on("heartbeat", async (userId) => {
+		await redisClient.expire(`user:sockets:${userId}`, 30);
 	});
 
 	socket.on("user_leave", (userId) => {
@@ -104,9 +113,12 @@ io.on("connection", (socket) => {
 	socket.on("leave_users_conv", (convId) => {
 		socket.leave(`users_conv_${convId}`);
 	});
-});
 
-import { redisClient } from "./db/redis.js";
+	socket.on("disconnect", async () => {
+		await redisClient.del(`user:sockets:${socket.userId}`);
+		io.emit("user_offline", socket.userId);
+	});
+});
 
 redisClient.set(`test`, "hello");
 
