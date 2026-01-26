@@ -98,6 +98,18 @@ socket.on('user_offline', (userId) => {
 	userList.value[userOfflineIndex].isOnline = false
 })
 
+socket.on('typing', (userId) => {
+	const userTypingIndex = userList.value.findIndex((user) => user.user_id == userId)
+
+	if (userList.value[userTypingIndex].isTyping) return
+
+	userList.value[userTypingIndex].isTyping = true
+
+	setTimeout(() => {
+		userList.value[userTypingIndex].isTyping = false
+	}, 3000) //3sec
+})
+
 setInterval(() => socket.emit('heartbeat'), 15000) //15sec
 
 onMounted(() => {
@@ -459,6 +471,10 @@ async function handleImageDrop(e) {
 
 	messageToSend.value += `\n![image](${res.data.url})`
 }
+
+function typing() {
+	socket.emit('typing', shownConvId.value)
+}
 </script>
 <template>
 	<div class="home">
@@ -590,6 +606,10 @@ async function handleImageDrop(e) {
 				Nouveaux messages
 			</button>
 			<div class="message-bar">
+				<div v-for="user in userList" class="typingUsers">
+					<div v-if="user.isTyping">{{ user.name }}</div>
+					<div v-if="user.isTyping">est en train d'écrire</div>
+				</div>
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
 					<textarea
 						placeholder="Envoyer un message"
@@ -600,6 +620,7 @@ async function handleImageDrop(e) {
 						@dragover.prevent=""
 						@drop.prevent="handleImageDrop"
 						maxlength="4096"
+						@input="typing"
 					></textarea>
 					<input
 						type="file"
@@ -825,6 +846,10 @@ async function handleImageDrop(e) {
 .self-message .message-text {
 	background: darkblue;
 	margin-left: auto;
+}
+
+.typingUsers {
+	display: flex;
 }
 
 .sendMessageForm {

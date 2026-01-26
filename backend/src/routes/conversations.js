@@ -211,9 +211,13 @@ conversationRouter.get("/:id/users", auth, async (req, res) => {
 			conv.Users = await Promise.all(
 				conv.Users.map(async (user) => {
 					const isOnline = await redisClient.exists(`user:sockets:${user.user_id}`);
+					const isTyping = await redisClient.exists(
+						`typing:${req.params.id}:${user.user_id}`,
+					);
 					return {
 						...user.get({ plain: true }),
 						isOnline: isOnline == 1, // 1 si l'user est en ligne, sinon 0
+						isTyping: isTyping == 1,
 					};
 				}),
 			);

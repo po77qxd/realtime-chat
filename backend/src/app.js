@@ -93,7 +93,7 @@ io.on("connection", async (socket) => {
 		socket.join(`user_${userId}`); //pour envoyer une update un a seul user
 		socket.userId = userId;
 		await redisClient.set(`user:sockets:${userId}`, socket.id);
-		await redisClient.expire(`user:sockets:${userId}`, 30);
+		await redisClient.expire(`user:sockets:${userId}`, 30); //30sec
 		io.emit("user_online", userId);
 	});
 
@@ -117,6 +117,14 @@ io.on("connection", async (socket) => {
 	socket.on("disconnect", async () => {
 		await redisClient.del(`user:sockets:${socket.userId}`);
 		io.emit("user_offline", socket.userId);
+	});
+
+	socket.on("typing", async (convId) => {
+		const userId = socket.userId;
+		await redisClient.set(`typing:${convId}:${userId}`, 1);
+		await redisClient.expire(`typing:${convId}:${userId}`, 3); //3sec
+
+		io.to(`conversation_${convId}`).emit("typing", userId);
 	});
 });
 
