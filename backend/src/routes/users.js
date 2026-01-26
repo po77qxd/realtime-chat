@@ -7,7 +7,7 @@ import { Op } from "sequelize";
 const userRouter = express();
 
 userRouter.get("/", auth, (req, res) => {
-	User.findAll({ order: ["name"], attributes: { exclude: ["password"] } })
+	User.findAll({ order: ["name"], attributes: { exclude: ["password", "email"] } })
 		.then((users) => {
 			const message = `Il y a ${users.length} utilisateurs qui correspondent au terme de la recherche`;
 			res.json(success(message, users));
@@ -22,7 +22,7 @@ userRouter.get("/", auth, (req, res) => {
 userRouter.get("/currentUser", auth, async (req, res) => {
 	try {
 		const user = await User.findByPk(req.user_id, {
-			attributes: { exclude: ["password"] }, // évite d'envoyer le mot de passe
+			attributes: { exclude: ["password", "email"] }, // évite d'envoyer le mot de passe et l'email
 		});
 		if (!user) {
 			return res.status(404).json({ message: "Utilisateur non trouvé." });
@@ -36,7 +36,7 @@ userRouter.get("/currentUser", auth, async (req, res) => {
 
 userRouter.get("/:id", auth, (req, res) => {
 	User.findByPk(req.params.id, {
-		attributes: { exclude: ["password"] }, // évite d'envoyer le mot de passe
+		attributes: { exclude: ["password", "email"] }, // évite d'envoyer le mot de passe et l'email
 	})
 		.then((user) => {
 			if (user === null) {
@@ -54,7 +54,7 @@ userRouter.get("/:id", auth, (req, res) => {
 
 userRouter.get("/:id/conversations", auth, (req, res) => {
 	User.findByPk(req.params.id, {
-		attributes: { exclude: ["password"] }, // évite d'envoyer le mot de passe
+		attributes: { exclude: ["password", "email"] }, // évite d'envoyer le mot de passe et l'email
 		include: [
 			{
 				model: Conversation,
