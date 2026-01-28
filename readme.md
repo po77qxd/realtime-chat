@@ -57,6 +57,18 @@ VITE_GIPHY_API_KEY=your_key
 
 ## ▶️ Getting Started (Development)
 
+```
+git clone https://github.com/po77qxd/realtime-chat.git
+cd realtime-chat
+```
+
+### Docker
+
+```
+cd backend
+docker compose up -d
+```
+
 ### Backend
 
 ```
