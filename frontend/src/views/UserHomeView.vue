@@ -396,6 +396,8 @@ async function deleteConv(convId) {
 
 function onScroll() {
 	const mc = messagesContainer.value
+	if (!mc) return
+
 	const distanceFromBottom = mc.scrollHeight - mc.scrollTop - mc.clientHeight
 
 	isUserAtBottom.value = distanceFromBottom < SCROLL_THRESHOLD
@@ -403,6 +405,7 @@ function onScroll() {
 
 function scrollToBottom() {
 	const mc = messagesContainer.value
+	if (!mc) return
 
 	mc.scrollTop = mc.scrollHeight
 }
@@ -726,7 +729,7 @@ watch(
 					<button @click="$refs.fileInput.click()" class="uploadImageButton">
 						<img src="../assets/image.png" />
 					</button>
-					<button @click="toggleGifPicker">GIF</button>
+					<button @click="toggleGifPicker" type="button">GIF</button>
 				</form>
 			</div>
 		</div>
