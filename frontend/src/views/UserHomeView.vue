@@ -512,6 +512,33 @@ async function getTrendingGifs() {
 function sendGif(gifTitle, gifUrl) {
 	messageToSend.value += `![${gifTitle}](${gifUrl})`
 }
+
+const leftColumn = ref([])
+const rightColumn = ref([])
+
+watch(
+	() => gifs.value,
+	(newGifs) => {
+		leftColumn.value = []
+		rightColumn.value = []
+
+		let leftHeight = 0
+		let rightHeight = 0
+
+		newGifs.forEach((gif) => {
+			const h = gif.images.fixed_height.height
+
+			if (leftHeight <= rightHeight) {
+				leftColumn.value.push(gif)
+				leftHeight += Number(h)
+			} else {
+				rightColumn.value.push(gif)
+				rightHeight += Number(h)
+			}
+		})
+	},
+	{ immediate: true },
+)
 </script>
 <template>
 	<div class="home">
@@ -652,13 +679,25 @@ function sendGif(gifTitle, gifUrl) {
 						v-model="gifQuery"
 					/>
 					<div class="gifGrid">
-						<img
-							v-for="(gif, index) in gifs"
-							:src="gif.images.fixed_width.url"
-							@click="sendGif(gif.title, gif.images.original.url)"
-							class="gifGridImg"
-							:style="{ gridColumn: index % 2 == 0 ? 1 : 2 }"
-						/>
+						<div class="gifCol">
+							<img
+								v-for="gif in leftColumn"
+								:key="gif.id"
+								:src="gif.images.fixed_height.url"
+								@click="sendGif(gif.title, gif.images.original.url)"
+								class="gifGridImg"
+							/>
+						</div>
+
+						<div class="gifCol">
+							<img
+								v-for="gif in rightColumn"
+								:key="gif.id"
+								:src="gif.images.fixed_height.url"
+								@click="sendGif(gif.title, gif.images.original.url)"
+								class="gifGridImg"
+							/>
+						</div>
 					</div>
 				</div>
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
@@ -940,6 +979,7 @@ function sendGif(gifTitle, gifUrl) {
 
 .message-bar .uploadImageButton {
 	width: 40px;
+	margin-right: 5px;
 }
 
 .message-bar .uploadImageButton img {
@@ -1019,6 +1059,7 @@ function sendGif(gifTitle, gifUrl) {
 	width: 25%;
 	align-self: end;
 	background-color: gray;
+	z-index: 999;
 }
 
 .gifPicker input {
@@ -1032,21 +1073,29 @@ function sendGif(gifTitle, gifUrl) {
 .gifPicker img:hover {
 	cursor: pointer;
 	/* opacity: 75%; */
-	transform: scale(1.04);
+	transform: scale(1.05);
 	transition: transform 0.15s ease;
 }
 
 .gifGrid {
 	height: 400px;
 	width: 300px;
-	display: grid;
-	overflow-y: scroll;
+	display: flex;
+	gap: 10px;
+	overflow-y: auto;
 	padding: 10px;
+}
+
+.gifCol {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 	gap: 10px;
 }
 
-.gifGrid .gifGridImg {
-	width: 120px;
+.gifGridImg {
+	width: 100%;
 	border-radius: 10px;
+	cursor: pointer;
 }
 </style>
