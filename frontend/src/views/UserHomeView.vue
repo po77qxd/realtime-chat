@@ -494,6 +494,7 @@ function toggleGifPicker() {
 	showGifPicker.value = !showGifPicker.value
 	if (showGifPicker.value) searchGif()
 }
+
 async function searchGif() {
 	//si la recherche est vide, on affiche les gifs trending
 	if (gifQuery.value == '') {
@@ -653,7 +654,7 @@ function sendGif(gifTitle, gifUrl) {
 					<div class="gifGrid">
 						<img
 							v-for="(gif, index) in gifs"
-							:src="gif.images.fixed_height.url"
+							:src="gif.images.fixed_width.url"
 							@click="sendGif(gif.title, gif.images.original.url)"
 							class="gifGridImg"
 							:style="{ gridColumn: index % 2 == 0 ? 1 : 2 }"
@@ -910,6 +911,8 @@ function sendGif(gifTitle, gifUrl) {
 .message-bar {
 	width: 100%;
 	margin-top: 15px;
+	display: flex;
+	flex-direction: column;
 }
 
 .message-bar textarea {
@@ -1008,15 +1011,42 @@ function sendGif(gifTitle, gifUrl) {
 	margin-bottom: 10px;
 }
 
+.gifPicker {
+	align-items: end;
+	display: flex;
+	flex-direction: column;
+	margin: 5px;
+	width: 25%;
+	align-self: end;
+	background-color: gray;
+}
+
+.gifPicker input {
+	padding: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	width: 85%;
+	align-self: center;
+}
+
+.gifPicker img:hover {
+	cursor: pointer;
+	/* opacity: 75%; */
+	transform: scale(1.04);
+	transition: transform 0.15s ease;
+}
+
 .gifGrid {
 	height: 400px;
 	width: 300px;
 	display: grid;
 	overflow-y: scroll;
-	background-color: gray;
+	padding: 10px;
+	gap: 10px;
 }
 
 .gifGrid .gifGridImg {
 	width: 120px;
+	border-radius: 10px;
 }
 </style>
