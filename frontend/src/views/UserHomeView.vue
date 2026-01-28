@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { ref, onMounted, nextTick, watch, computed } from 'vue'
 import conversationService from '@/services/conversationService'
 import userService from '@/services/userService'
 import messageService from '@/services/messageService'
@@ -40,6 +40,16 @@ const SCROLL_THRESHOLD = 50 //px
 
 const sendMessageTextarea = ref(null)
 const editMessageTextarea = ref(null)
+const typingText = computed(() => {
+	const typingUsers = userList.value?.filter((user) => user.isTyping).map((user) => user.name)
+	if (!typingUsers) return
+
+	const count = typingUsers.length
+	if (count == 0) return ''
+	if (count == 1) return `${typingUsers[0]} est en train d'écrire`
+	if (count <= 3) return `${typingUsers.join(', ')} sont en train d'écrire`
+	return "Plusieurs utilisateurs sont en train d'écrire"
+})
 
 //sockets:
 socket.on('new_message', async (message) => {
@@ -606,10 +616,7 @@ function typing() {
 				Nouveaux messages
 			</button>
 			<div class="message-bar">
-				<div v-for="user in userList" class="typingUsers">
-					<div v-if="user.isTyping">{{ user.name }}</div>
-					<div v-if="user.isTyping">est en train d'écrire</div>
-				</div>
+				<div class="typingUsers" v-if="typingText">{{ typingText }}</div>
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
 					<textarea
 						placeholder="Envoyer un message"
