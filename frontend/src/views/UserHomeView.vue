@@ -1060,6 +1060,7 @@ watch(
 	align-self: end;
 	background-color: gray;
 	z-index: 999;
+	margin-top: -475px;
 }
 
 .gifPicker input {
