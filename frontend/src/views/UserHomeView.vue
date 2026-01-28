@@ -12,6 +12,7 @@ import { marked } from 'marked'
 import axios from 'axios'
 
 import { socket } from '@/main'
+import gifService from '@/services/gifService'
 
 const userStore = useUserStore()
 
@@ -50,6 +51,9 @@ const typingText = computed(() => {
 	if (count <= 3) return `${typingUsers.join(', ')} sont en train d'écrire`
 	return "Plusieurs utilisateurs sont en train d'écrire"
 })
+const showGifPicker = ref(false)
+const gifQuery = ref('')
+const gifs = ref([])
 
 //sockets:
 socket.on('new_message', async (message) => {
@@ -485,6 +489,28 @@ async function handleImageDrop(e) {
 function typing() {
 	socket.emit('typing', shownConvId.value)
 }
+
+function toggleGifPicker() {
+	showGifPicker.value = !showGifPicker.value
+	if (showGifPicker.value) searchGif()
+}
+async function searchGif() {
+	//si la recherche est vide, on affiche les gifs trending
+	if (gifQuery.value == '') {
+		getTrendingGifs()
+		return
+	}
+	const res = await gifService.searchGif(gifQuery.value)
+	gifs.value = res.data.data
+}
+
+async function getTrendingGifs() {
+	const res = await gifService.getTrendingGifs()
+	gifs.value = res.data.data
+}
+function sendGif(gifTitle, gifUrl) {
+	messageToSend.value += `![${gifTitle}](${gifUrl})`
+}
 </script>
 <template>
 	<div class="home">
@@ -617,6 +643,23 @@ function typing() {
 			</button>
 			<div class="message-bar">
 				<div class="typingUsers" v-if="typingText">{{ typingText }}</div>
+				<div v-if="showGifPicker" class="gifPicker">
+					<input
+						type="text"
+						@input="searchGif"
+						placeholder="Rechercher un gif"
+						v-model="gifQuery"
+					/>
+					<div class="gifGrid">
+						<img
+							v-for="(gif, index) in gifs"
+							:src="gif.images.fixed_height.url"
+							@click="sendGif(gif.title, gif.images.original.url)"
+							class="gifGridImg"
+							:style="{ gridColumn: index % 2 == 0 ? 1 : 2 }"
+						/>
+					</div>
+				</div>
 				<form @submit.prevent="sendMessage" class="sendMessageForm">
 					<textarea
 						placeholder="Envoyer un message"
@@ -643,6 +686,7 @@ function typing() {
 					<button @click="$refs.fileInput.click()" class="uploadImageButton">
 						<img src="../assets/image.png" />
 					</button>
+					<button @click="toggleGifPicker">GIF</button>
 				</form>
 			</div>
 		</div>
@@ -962,5 +1006,17 @@ function typing() {
 
 .userListShownClass button {
 	margin-bottom: 10px;
+}
+
+.gifGrid {
+	height: 400px;
+	width: 300px;
+	display: grid;
+	overflow-y: scroll;
+	background-color: gray;
+}
+
+.gifGrid .gifGridImg {
+	width: 120px;
 }
 </style>
