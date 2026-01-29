@@ -1,6 +1,6 @@
 import express from "express";
-import { sequelize, initDb } from "./db/sequelize.js";
 import "dotenv/config";
+import { sequelize, initDb } from "./db/sequelize.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { upload } from "./middlewares/multer.js";
@@ -12,13 +12,13 @@ import { Message } from "./db/sequelize.js";
 import { redisClient } from "./db/redis.js";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: "http://localhost:5173",
+		origin: process.env.FRONTEND_URL,
 		credentials: true,
 	}),
 );
@@ -75,7 +75,7 @@ initDb();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	cors: {
-		origin: ["http://localhost:3001", "http://localhost:5173"],
+		origin: [process.env.WEBSOCKET_URL, process.env.FRONTEND_URL],
 	},
 });
 
@@ -133,4 +133,4 @@ redisClient.set(`test`, "hello");
 const testRedis = await redisClient.get(`test`);
 console.log(testRedis);
 
-httpServer.listen(3001);
+httpServer.listen(process.env.WEBSOCKET_PORT);

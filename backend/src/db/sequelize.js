@@ -11,12 +11,17 @@ import { conversations } from "./mock-conversation.js";
 import { userConversations } from "./mock-user-conversation.js";
 import { messages } from "./mock-message.js";
 
-const sequelize = new Sequelize("db_chat", "root", "root", {
-	host: "localhost",
-	port: 6034,
-	dialect: "mysql",
-	logging: false,
-});
+const sequelize = new Sequelize(
+	process.env.MYSQL_DATABASE,
+	process.env.MYSQL_USER,
+	process.env.MYSQL_PASSWORD,
+	{
+		host: process.env.MYSQL_HOST,
+		port: process.env.MYSQL_PORT,
+		dialect: "mysql",
+		logging: false,
+	},
+);
 
 // Init models
 const User = UserModel(sequelize, DataTypes);
@@ -73,7 +78,7 @@ const importUsers = async () => {
 				email: user.email,
 				password: hash,
 			});
-		})
+		}),
 	);
 };
 
@@ -81,7 +86,7 @@ const importConversations = async () => {
 	await Promise.all(
 		conversations.map(async (conv) => {
 			await Conversation.create(conv);
-		})
+		}),
 	);
 };
 
@@ -89,7 +94,7 @@ const importUserConversations = async () => {
 	await Promise.all(
 		userConversations.map(async (uc) => {
 			await UserConversation.create(uc);
-		})
+		}),
 	);
 };
 
@@ -97,7 +102,7 @@ const importMessages = async () => {
 	await Promise.all(
 		messages.map(async (msg) => {
 			await Message.create(msg);
-		})
+		}),
 	);
 };
 
