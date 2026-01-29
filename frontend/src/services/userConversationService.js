@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-	baseURL: 'http://localhost:3000/api/user_conversation/',
+	baseURL: `${import.meta.env.VITE_BACKEND_URL}/api/user_conversation/`,
 	withCredentials: true,
 	headers: {
 		Accept: 'application/json',
