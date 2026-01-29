@@ -41,17 +41,43 @@ A modern real-time chat application built with **Vue 3** and **Node.js**, featur
 
 ## ⚙️ Environment Variables
 
-### Backend (.env)
-
-```env
-PRIV_KEY=YOUR_PRIVATE_KEY
-```
-
 ### Frontend (.env)
 
-```env
-VITE_GIPHY_API_KEY=your_key
 ```
+VITE_GIPHY_API_KEY=your_key
+VITE_BACKEND_URL=http://localhost:3000
+VITE_WEBSOCKET_URL=ws://localhost:3001
+```
+
+### Backend (.env)
+
+```
+PRIV_KEY=YOUR_PRIVATE_KEY
+REDIS_URL=redis://default:admin@localhost:6379
+
+MYSQL_HOST=localhost
+MYSQL_PORT=6034
+MYSQL_DATABASE=db_chat
+MYSQL_USER=root
+MYSQL_PASSWORD=root
+
+FRONTEND_URL=http://localhost:5173
+PORT=3000
+WEBSOCKET_PORT=3001
+WEBSOCKET_URL=http://localhost:3001
+```
+
+## 🔑 Giphy API Key
+
+To enable GIF support, you need a Giphy API key.
+
+1. Go to https://developers.giphy.com
+2. Create a Giphy account (or log in)
+3. Create a new app
+4. Copy the generated API key
+5. Paste it into your frontend `.env` file as:
+
+VITE_GIPHY_API_KEY=your_key
 
 ---
 
@@ -108,3 +134,12 @@ npm run dev
 - Automatically scrolls when new messages arrive
 - Disabled if the user scrolls up to read older messages
 - Prevents scroll jump during message history browsing
+
+## 🧪 TODOs
+
+- Improve UI / UX
+- Private conversations and private messages
+- Moderation tools:
+  - User bans
+  - Mutes
+  - Slow mode
