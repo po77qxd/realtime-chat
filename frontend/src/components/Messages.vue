@@ -160,7 +160,7 @@ watch(messagetoEdit, async () => {
 }
 
 .message-sender {
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: bold;
 	margin-top: 5px;
 }
