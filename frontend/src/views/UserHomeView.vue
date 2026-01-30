@@ -327,8 +327,18 @@ function scrollToBottom() {
 }
 
 //hide or show userlist
-function handleUserListState() {
+async function handleUserListState() {
 	userListShown.value = !userListShown.value
+	if (userListShown.value) {
+		conversationService
+			.getConvUsers(shownConvId.value)
+			.then((response) => {
+				userList.value = response.data.data
+			})
+			.catch((error) => {
+				console.log(error)
+			})
+	}
 }
 </script>
 <template>
