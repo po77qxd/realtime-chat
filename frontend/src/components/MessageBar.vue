@@ -190,7 +190,9 @@ watch(messageToSend, async () => {
 			<button @click="$refs.fileInput.click()" class="uploadImageButton">
 				<img src="../assets/image.png" />
 			</button>
-			<button @click="toggleGifPicker" type="button">GIF</button>
+			<button @click="toggleGifPicker" type="button" class="gifButton">
+				<img src="../assets/gif.png" />
+			</button>
 		</form>
 	</div>
 </template>
@@ -244,6 +246,14 @@ watch(messageToSend, async () => {
 }
 
 .sendButton img {
+	width: 100%;
+}
+
+.message-bar .gifButton {
+	width: 40px;
+}
+
+.message-bar .gifButton img {
 	width: 100%;
 }
 
