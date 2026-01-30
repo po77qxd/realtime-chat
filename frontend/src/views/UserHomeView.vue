@@ -78,12 +78,12 @@ socket.on('user_join_conv', (user) => {
 })
 
 socket.on('user_online', (userId) => {
-	if (!userListShown) return
+	if (!userListShown.value) return
 	const userOnlineIndex = userList.value?.findIndex((user) => user.user_id == userId)
 	userList.value[userOnlineIndex].isOnline = true
 })
 socket.on('user_offline', (userId) => {
-	if (!userListShown) return
+	if (!userListShown.value) return
 	const userOfflineIndex = userList.value.findIndex((user) => user.user_id == userId)
 	userList.value[userOfflineIndex].isOnline = false
 })
